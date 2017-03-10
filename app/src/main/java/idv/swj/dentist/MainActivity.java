@@ -1,49 +1,86 @@
 package idv.swj.dentist;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    Button loginButton;
+    Button userNameButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //設定 TabView
 
-        TabHost tabHost=(TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-        TabHost.TabSpec tabSpec;
-
-
-        tabSpec = tabHost.newTabSpec("tab1");
-        tabSpec.setContent(R.id.tab1);
-        tabSpec.setIndicator(getResources().getString(R.string.tab1));
-        tabHost.addTab(tabSpec);
-
-        tabSpec = tabHost.newTabSpec("tab2");
-        tabSpec.setContent(R.id.tab2);
-        tabSpec.setIndicator(getResources().getString(R.string.tab2));
-        tabHost.addTab(tabSpec);
-
-        tabSpec = tabHost.newTabSpec("tab3");
-        tabSpec.setContent(R.id.tab3);
-        tabSpec.setIndicator(getResources().getString(R.string.tab3));
-        tabHost.addTab(tabSpec);
-
-        tabSpec = tabHost.newTabSpec("tab4");
-        tabSpec.setContent(R.id.tab4);
-        tabSpec.setIndicator(getResources().getString(R.string.tab4));
-        tabHost.addTab(tabSpec);
-
-        tabHost.setCurrentTab(0);
+        getSupportActionBar().hide(); //隱藏標題
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
 
 
 
+        loginButton = (Button)findViewById(R.id.login);
+        userNameButton = (Button) findViewById(R.id.userName);
+
+
+
+        //己登入測試
+        loginButton.setVisibility(View.INVISIBLE);
 
 
     }
+
+    public void tabPage(View v){
+
+        int viewID = v.getId();
+        Intent intent = new Intent();
+
+        switch (viewID){
+
+            case R.id.tab1b:
+                intent.setClass(this,Intro.class);
+                break;
+
+            case R.id.tab2b:
+                intent.setClass(this,News.class);
+                break;
+
+            case R.id.tab3b:
+                intent.setClass(this,Therapy.class);
+                break;
+
+            case R.id.tab4b:
+                intent.setClass(this,Doctors.class);
+                break;
+
+            case R.id.newReservation:
+                intent.setClass(this,NewReservationMaster.class);
+                break;
+
+            case R.id.myReservation:
+                intent.setClass(this,MyReservation.class);
+                break;
+            case R.id.login:
+                intent.setClass(this,Login.class);
+                break;
+            case R.id.userName:
+                loginButton.setVisibility(View.VISIBLE);
+                return;
+
+            default:
+                return;
+        }
+        startActivity(intent);
+
+    }
+
+
+
 }
