@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dentist</string>
+    <string name="title">牙医诊所</string>
+    <string name="tab1">诊所介绍</string>
+    <string name="tab2">最新消息</string>
+    <string name="tab3">诊疗项目</string>
+    <string name="tab4">医师简介</string>
+</resources>

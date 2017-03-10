@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dentist</string>
+    <string name="title">牙醫診所</string>
+    <string name="tab1">診所介紹</string>
+    <string name="tab2">最新消息</string>
+    <string name="tab3">診療項目</string>
+    <string name="tab4">醫師簡介</string>
+</resources>
