@@ -6,4 +6,31 @@
     <string name="tab2">最新消息</string>
     <string name="tab3">診療項目</string>
     <string name="tab4">醫師簡介</string>
+    <string name="newReservation">線上預約</string>
+    <string name="myReservation">我的預約</string>
+    <string name="doctorSelectTitle">選擇醫師:</string>
+    <string name="login">登入</string>
+    <string name="loginAccountTitle">身份證字號:</string>
+    <string name="submit">確認</string>
+    <string name="passwordTitle">密碼:</string>
+    <string name="passwordRequest">6~8 個字元, 需含下列兩種字元:1. 英文大/小寫字元(A~Z)(a~z)  2.基本數字(0~9)</string>
+    <string name="idRequest">請輸入身分證字號</string>
+    <string name="forgetPW">忘記密碼</string>
+    <string name="newAccount">新建帳號</string>
+    <string name="passwordError001Len">需為 6~8 字元</string>
+    <string name="passwordError002Character">需含下列兩種字元:1. 英文大/小寫字元(A~Z)(a~z)  2.基本數字(0~9)</string>
+    <string name="loginSuceesfully">登入成功</string>
+    <string name="nameTitle">真實姓名:</string>
+    <string name="rePassword">確認密碼:</string>
+    <string name="telephoneNum">電話號碼</string>
+    <string name="emailTitle">電子郵件</string>
+    <string name="gender">性別</string>
+    <string name="female">女</string>
+    <string name="male">男</string>
+    <string name="birthday">出生年月日</string>
+    <string name="singin">註冊</string>
+    <string name="cancel">取消</string>
+    <string name="nameNoEmpty">姓名不得空白</string>
+
+
 </resources>

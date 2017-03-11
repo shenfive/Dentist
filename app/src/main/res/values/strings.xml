@@ -1,8 +1,34 @@
 <resources>
     <string name="app_name">Dentist</string>
     <string name="title">Dentist</string>
-    <string name="tab1">tab1</string>
-    <string name="tab2">tab2</string>
-    <string name="tab3">tab3</string>
-    <string name="tab4">tab4</string>
+    <string name="tab1">Intro</string>
+    <string name="tab2">News</string>
+    <string name="tab3">therapy</string>
+    <string name="tab4">Doctoer</string>
+    <string name="newReservation">New Reservation</string>
+    <string name="myReservation">My Reservation(s)</string>
+    <string name="doctorSelectTitle">Select Doctor:</string>
+    <string name="login">Login</string>
+    <string name="loginAccountTitle">Enter Your ID:</string>
+    <string name="submit">Submit</string>
+    <string name="passwordTitle">Password:</string>
+    <string name="passwordRequest">6 to 8 characters, including two of characters: 1. capital letters(A~Z) or lowercase (a~z) 2.numbers (0~9 )</string>
+    <string name="idRequest">Passport Number or Taiwan national ID number</string>
+    <string name="forgetPW">forget password</string>
+    <string name="newAccount">Sing in new Account</string>
+    <string name="passwordError001Len">must 6 to 8 charecters</string>
+    <string name="passwordError002Character">must including 1. capital letters or lowercase (A~Z)(a~z) 2. numbers (0~9)</string>
+    <string name="loginSuceesfully">Login suceesfully</string>
+    <string name="nameTitle">Name:</string>
+    <string name="rePassword">Confirm password</string>
+    <string name="telephoneNum">PhoneNum</string>
+    <string name="emailTitle">E-mail</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="birthday">Birthday</string>
+    <string name="singin">Singin</string>
+    <string name="cancel">Cancel</string>
+    <string name="nameNoEmpty">Name is  blank</string>
+
 </resources>

@@ -1,6 +1,7 @@
 package idv.swj.dentist;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,11 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     Button loginButton;
     Button userNameButton;
+    SharedPreferences loginPre;
 
 
     @Override
@@ -28,16 +33,27 @@ public class MainActivity extends AppCompatActivity {
 
         loginButton = (Button)findViewById(R.id.login);
         userNameButton = (Button) findViewById(R.id.userName);
+        loginPre = getSharedPreferences("loginStatus",0);
 
 
 
-        //己登入測試
-        loginButton.setVisibility(View.INVISIBLE);
 
 
     }
 
-    public void tabPage(View v){
+    @Override
+    public void onResume(){
+        super.onResume();
+
+
+        //己登入測試
+        modifyLoginStatusUI();
+
+
+    }
+
+
+    public void buttonOnClick(View v){
 
         int viewID = v.getId();
         Intent intent = new Intent();
@@ -71,13 +87,33 @@ public class MainActivity extends AppCompatActivity {
                 intent.setClass(this,Login.class);
                 break;
             case R.id.userName:
+                loginPre.edit().clear().commit();
+
+                Toast.makeText(this,"己登出",Toast.LENGTH_LONG).show();
                 loginButton.setVisibility(View.VISIBLE);
+                userNameButton.setVisibility(View.INVISIBLE);
+
                 return;
 
             default:
                 return;
         }
         startActivity(intent);
+
+    }
+
+    private void modifyLoginStatusUI(){
+        //己登入測試
+        String username = loginPre.getString("name","nameError404");
+
+        if(!username.equals("nameError404"))
+        {
+            userNameButton.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.INVISIBLE);
+            userNameButton.setText("Welcome \n "+username);
+        }else {
+            userNameButton.setVisibility(View.INVISIBLE);
+        }
 
     }
 
