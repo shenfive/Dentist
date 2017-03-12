@@ -1,11 +1,13 @@
 package idv.swj.dentist;
 
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -15,6 +17,7 @@ public class CreateAccount extends AppCompatActivity {
 
     EditText account,name,phone,email,password1,password2;
     RadioButton male,female;
+    RadioGroup radioGroup;
     DatePicker datePicker;
 
 
@@ -32,12 +35,20 @@ public class CreateAccount extends AppCompatActivity {
         male = (RadioButton)findViewById(R.id.male);
         female = (RadioButton)findViewById(R.id.female);
         datePicker = (DatePicker)findViewById(R.id.datePicker);
-
-
+        radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
 
 
         getSupportActionBar().hide(); //隱藏標題
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
+
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                Toast.makeText(CreateAccount.this,""+ checkedId,Toast.LENGTH_SHORT).show();
+                
+            }
+        });
 
 
     }
@@ -65,7 +76,7 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    public String[] checkPassword(String password){
+    public String[] checkPassword(String password1,String password2){
 
         String status[] = {"",""};
 
@@ -73,16 +84,19 @@ public class CreateAccount extends AppCompatActivity {
         //用正規表示法檢查是否包含英數字
         String patternStr = "[a-zA-Z]{1}[0-9]{1}";
         Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(password);
+        Matcher matcher = pattern.matcher(password1);
         boolean matchFound = matcher.find();
 
 
-        if( (password.length() < 6 ) || (password.length() >8 ) ){
+        if( (password1.length() < 6 ) || (password1.length() >8 ) ){
             status[0] = "401";
             status[1] = getResources().getString(R.string.passwordError001Len);
         }else if( !matchFound ){
             status[0] = "402";
             status[1] = getResources().getString(R.string.passwordError002Character);
+        }else if( !password1.equals(password2)) {
+            status[0] = "403";
+            status[1] = getResources().getString(R.string.passwordError003dif);
         }else{
             status[0] = "200";
             status[1] = "true";
@@ -161,9 +175,16 @@ public class CreateAccount extends AppCompatActivity {
 //            return;
 //        }
 //
-        emailS = email.getText().toString();
-        checkStatus = checkEmailFormat(emailS);
+//        emailS = email.getText().toString();
+//        checkStatus = checkEmailFormat(emailS);
+//        Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
+
+        password1S = password1.getText().toString();
+        password2S = password2.getText().toString();
+        checkStatus = checkPassword(password1S,password2S);
         Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
+
+
 
     }
 
