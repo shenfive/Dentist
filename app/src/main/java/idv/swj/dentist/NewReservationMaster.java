@@ -25,7 +25,7 @@ public class NewReservationMaster extends AppCompatActivity {
         setContentView(R.layout.activity_new_reservation_master);
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
 
         doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);

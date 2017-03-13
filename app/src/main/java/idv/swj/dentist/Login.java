@@ -27,7 +27,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         account = (EditText)findViewById(R.id.account);
         password = (EditText)findViewById(R.id.password);
@@ -62,10 +62,16 @@ public class Login extends AppCompatActivity {
 
 
         //用正規表示法檢查是否包含英數字
-        String patternStr = "[a-zA-Z]{1}[0-9]{1}";
-        Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(password);
-        boolean matchFound = matcher.find();
+        String patternStr1 = "[a-zA-Z]{1}";
+        Pattern pattern1 = Pattern.compile(patternStr1);
+        Matcher matcher1 = pattern1.matcher(password);
+        boolean matchFound1 = matcher1.find();
+
+        String patternStr2 = "[0-9]{1}";
+        Pattern pattern2 = Pattern.compile(patternStr2);
+        Matcher matcher2 = pattern2.matcher(password);
+        boolean matchFound2 = matcher2.find();
+        boolean matchFound = matchFound1 & matchFound2;
 
 
         if( (password.length() < 6 ) || (password.length() >8 ) ){

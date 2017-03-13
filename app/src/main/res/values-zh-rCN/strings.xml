@@ -31,4 +31,6 @@
     <string name="singin">注册</string>
     <string name="cancel">取消</string>
     <string name="nameNoEmpty">姓名不得空白</string>
+    <string name="passwordError003dif">两次密码必需相同</string>
+    <string name="phoneTooShort">电话应10码或以上</string>
 </resources>

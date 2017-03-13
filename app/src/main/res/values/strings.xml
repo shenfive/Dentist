@@ -30,5 +30,7 @@
     <string name="singin">Singin</string>
     <string name="cancel">Cancel</string>
     <string name="nameNoEmpty">Name is  blank</string>
+    <string name="passwordError003dif">The two passwords must be the same</string>
+    <string name="phoneTooShort">Phone Number must 10 charecters or more</string>
 
 </resources>

@@ -1,15 +1,18 @@
 package idv.swj.dentist;
 
+import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,16 +42,28 @@ public class CreateAccount extends AppCompatActivity {
 
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                Toast.makeText(CreateAccount.this,""+ checkedId,Toast.LENGTH_SHORT).show();
-                
+                //將鍵盤收起來
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(group.getWindowToken(), 0);
+
+
+                datePicker.requestFocus();
             }
         });
+
+        long today = new Date().getTime();
+
+
+        datePicker.setMaxDate(today - 1000);
+        datePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
+
 
 
     }
@@ -69,7 +84,7 @@ public class CreateAccount extends AppCompatActivity {
         }
         else {
             status[0] = "400";
-            status[1] = "格式不正確";
+            status[1] = "電子郵件格式不正確";
         }
         return status;
 
@@ -82,10 +97,16 @@ public class CreateAccount extends AppCompatActivity {
 
 
         //用正規表示法檢查是否包含英數字
-        String patternStr = "[a-zA-Z]{1}[0-9]{1}";
-        Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(password1);
-        boolean matchFound = matcher.find();
+        String patternStr1 = "[a-zA-Z]{1}";
+        Pattern pattern1 = Pattern.compile(patternStr1);
+        Matcher matcher1 = pattern1.matcher(password1);
+        boolean matchFound1 = matcher1.find();
+
+        String patternStr2 = "[0-9]{1}";
+        Pattern pattern2 = Pattern.compile(patternStr2);
+        Matcher matcher2 = pattern2.matcher(password1);
+        boolean matchFound2 = matcher2.find();
+        boolean matchFound = matchFound1 & matchFound2;
 
 
         if( (password1.length() < 6 ) || (password1.length() >8 ) ){
@@ -160,29 +181,67 @@ public class CreateAccount extends AppCompatActivity {
         String[] checkStatus = {"",""};
         String acccountS,nameS,password1S,password2S,emailS,phoneS,genderS,birthdayS;
 
-//        acccountS = account.getText().toString();
-//        checkStatus = checkPID(acccountS);
-//        if(!checkStatus[0].equals("200")){
-//            Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
-//            account.requestFocus();
-//            return;
-//        }
-//
-//        nameS = name.getText().toString();
-//        if(nameS.length()<1){
-//            Toast.makeText(this,getResources().getString(R.string.nameNoEmpty),Toast.LENGTH_SHORT).show();
-//            name.requestFocus();
-//            return;
-//        }
-//
-//        emailS = email.getText().toString();
-//        checkStatus = checkEmailFormat(emailS);
-//        Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
+        acccountS = account.getText().toString();
+        checkStatus = checkPID(acccountS);
+        if(!checkStatus[0].equals("200")){
+            Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
+            account.requestFocus();
+            return;
+        }
+
+        nameS = name.getText().toString();
+        if(nameS.length()<1){
+            Toast.makeText(this,getResources().getString(R.string.nameNoEmpty),Toast.LENGTH_SHORT).show();
+            name.requestFocus();
+            return;
+        }
+
 
         password1S = password1.getText().toString();
         password2S = password2.getText().toString();
         checkStatus = checkPassword(password1S,password2S);
-        Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
+        if (!checkStatus[0].equals("200")) {
+            Toast.makeText(this, checkStatus[1], Toast.LENGTH_SHORT).show();
+            if (checkStatus[0].equals("403")){
+                password2.requestFocus();
+            }else {
+                password1.requestFocus();
+            }
+            return;
+        }
+
+        phoneS = phone.getText().toString();
+        if(phoneS.length()<10){
+            Toast.makeText(this,getResources().getString(R.string.phoneTooShort),Toast.LENGTH_SHORT).show();
+            phone.requestFocus();
+            return;
+        }
+
+
+
+        emailS = email.getText().toString();
+        checkStatus = checkEmailFormat(emailS);
+        if(!checkStatus[0].equals("200")) {
+            Toast.makeText(this, checkStatus[1], Toast.LENGTH_SHORT).show();
+            email.requestFocus();
+            return;
+        }
+
+        if(male.isChecked()){
+            genderS = "male";
+        }else if(female.isChecked()){
+            genderS = "female";
+        }else {
+            Toast.makeText(this, getResources().getString(R.string.gender), Toast.LENGTH_SHORT).show();
+            radioGroup.requestFocus();
+            return;
+        }
+
+        birthdayS = datePicker.getYear()+" "+(datePicker.getMonth()+1)+"/"+datePicker.getDayOfMonth();
+        Toast.makeText(this, birthdayS+"檢查完", Toast.LENGTH_SHORT).show();
+
+        // 接下來要打 API 了
+
 
 
 

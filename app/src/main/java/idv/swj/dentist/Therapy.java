@@ -3,8 +3,11 @@ package idv.swj.dentist;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 
 public class Therapy extends AppCompatActivity {
+
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -12,7 +15,10 @@ public class Therapy extends AppCompatActivity {
         setContentView(R.layout.activity_therapy);
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); //隱藏狀態
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
+
+        webView = (WebView)findViewById(R.id.therapyWeb);
+        webView.loadUrl("http://www.charmingdent.com.tw/service.html");
 
     }
 }
