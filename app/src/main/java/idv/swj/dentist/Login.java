@@ -2,7 +2,6 @@ package idv.swj.dentist;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaCodec;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +9,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
+
 //import java.sql.Date;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +35,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         account = (EditText)findViewById(R.id.account);
         password = (EditText)findViewById(R.id.password);
@@ -140,6 +148,12 @@ public class Login extends AppCompatActivity {
 
     private void checkPasswordInput(String account,String password){
 
+        TheLogin theLogin = new TheLogin();
+        theLogin.start();
+
+
+
+
         if (account.equals("A123456789") && password.equals("a12345") ){
             loginPre.edit().putString("name","王小明")
             .putLong("lastLogin",new Date().getTime())
@@ -162,6 +176,85 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setClass(this,CreateAccount.class);
         startActivity(intent);
+    }
+
+    class TheLogin extends Thread
+    {
+        //類別裡的成員資料;
+        //類別裡的方法;
+
+        String apiLocation = "http://220.135.157.238:1113/api/PatientData/AddPatient/";
+        URL url;
+        String urlParameters = "{\n" +
+                "\t\"Header\": {\n" +
+                "\t\t\"Version\": \"1.0\",\n" +
+                "\t\t\"CompanyId\": \"4881017701 \",\n" +
+                "\t\t\"ActionMode\": \"LoginPatient\"\n" +
+                "\t},\n" +
+                "\t\"Data\": {\n" +
+                "\t\t\"Account\": \"Andy\",\n" +
+                "\t\t\"PatientPin\":\"1234567890\"\n" +
+                "\t}\n" +
+                "}";
+        public void run()    //改寫Thread類別裡的run()方法
+        {
+            //以執行緒處理的程序;
+
+            // Http Post 試認證
+            HttpURLConnection connection = null;
+            try {
+                url = new URL(apiLocation); //建立 URL
+                connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
+                connection.setReadTimeout(5000); //設置讀取超時為5秒
+                connection.setConnectTimeout(10000); //設置連接網路超時為10秒
+
+                connection.setDoInput(true);//可從伺服器取得資料
+                connection.setDoOutput(true);//可寫入資料至伺服器
+
+                connection.setRequestMethod("POST"); //設置請求的方法為POST
+
+                connection.setRequestProperty("Content-Type",
+                        "application/json");
+                connection.setRequestProperty("Content-Language", "zh-TW");
+                connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
+
+
+                Log.d("rsulot:","try5");
+                //Send request
+                DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+                Log.d("rsulot:","try6");
+                wr.writeBytes (urlParameters);
+                wr.flush ();
+                wr.close ();
+
+                //Get Response
+                InputStream is = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+
+                rd.close();
+                Log.d("rsulot:",response.toString());
+
+
+
+            } catch (Exception e) {
+                String er = e.getMessage();
+                //e.printStackTrace();
+                //Log.d("error",e.getLocalizedMessage().toString());
+                Log.d("rsulot:","try2"+e);
+            }
+
+
+
+
+            Log.d("rsulot:","abc");
+
+        }
     }
 
 
