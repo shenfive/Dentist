@@ -33,10 +33,13 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        try {
+            getSupportActionBar().hide(); //隱藏標題
+            //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
+        }catch (Exception e){
+            Log.d("error",e.getLocalizedMessage());
 
-        getSupportActionBar().hide(); //隱藏標題
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
-
+        }
         account = (EditText)findViewById(R.id.account);
         password = (EditText)findViewById(R.id.password);
         loginPre = getSharedPreferences("loginStatus",0);
@@ -48,14 +51,14 @@ public class Login extends AppCompatActivity {
         String pass = password.getText().toString();
         String[] passwordStatus = checkPassword(pass);
 
-        if (passwordStatus[0] != "200") {
+        if (!passwordStatus[0].equals("200")) {
             Toast.makeText(Login.this, "密碼格式錯誤,代碼:"+ passwordStatus[0] + "\n" + passwordStatus[1], Toast.LENGTH_SHORT).show();
             return;
         }
 
         String acc = account.getText().toString().toUpperCase();
         String[] accountStatus = checkPID(acc);
-        if(accountStatus[0] != "200") {
+        if(!accountStatus[0].equals("200")) {
             Toast.makeText(Login.this, "身份證字號錯誤,代碼:" + accountStatus[0] + "\n" + accountStatus[1], Toast.LENGTH_SHORT).show();
             return;
         }
@@ -131,7 +134,7 @@ public class Login extends AppCompatActivity {
             num[i]=(id.charAt(i)-'0');
         }
         num[0]=rdd[id.charAt(0)-'A'];
-        int sum=((int)num[0]/10+(num[0]%10)*9);
+        int sum=(num[0]/10+(num[0]%10)*9);
         for(int i=0;i<8;i++){
             sum+=num[i+1]*(8-i);
         }
@@ -149,24 +152,26 @@ public class Login extends AppCompatActivity {
     private void checkPasswordInput(String account,String password){
 
         TheLogin theLogin = new TheLogin();
+        theLogin.account = account;
+        theLogin.password = password;
         theLogin.start();
 
 
-
-
-        if (account.equals("A123456789") && password.equals("a12345") ){
-            loginPre.edit().putString("name","王小明")
-            .putLong("lastLogin",new Date().getTime())
-            .putString("account",account)
-            .putString("password",password)
-            .commit();
-            synchronized (loginPre) {
-                Toast.makeText(Login.this,getResources().getText(R.string.loginSuceesfully),Toast.LENGTH_LONG).show();
-                this.finish();
-            }
-        }else {
-            Toast.makeText(Login.this,"帳密錯誤, 請重新輸入",Toast.LENGTH_LONG).show();
-        }
+            // 測試時用的
+//
+//        if (account.equals("A123456789") && password.equals("a12345") ){
+//            loginPre.edit().putString("name","王小明")
+//            .putLong("lastLogin",new Date().getTime())
+//            .putString("account",account)
+//            .putString("password",password)
+//            .commit();
+//            synchronized (loginPre) {
+//                Toast.makeText(Login.this,getResources().getText(R.string.loginSuceesfully),Toast.LENGTH_LONG).show();
+//                this.finish();
+//            }
+//        }else {
+//            Toast.makeText(Login.this,"帳密錯誤, 請重新輸入",Toast.LENGTH_LONG).show();
+//        }
 
 
     }
@@ -178,10 +183,12 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
-    class TheLogin extends Thread
+    private class TheLogin extends Thread
     {
         //類別裡的成員資料;
         //類別裡的方法;
+        String account;
+        String password;
 
         String apiLocation = "http://220.135.157.238:1113/api/PatientData/AddPatient/";
         URL url;
@@ -192,8 +199,8 @@ public class Login extends AppCompatActivity {
                 "\t\t\"ActionMode\": \"LoginPatient\"\n" +
                 "\t},\n" +
                 "\t\"Data\": {\n" +
-                "\t\t\"Account\": \"Andy\",\n" +
-                "\t\t\"PatientPin\":\"1234567890\"\n" +
+                "\t\t\"Account\": \""+account+"\",\n" +
+                "\t\t\"PatientPin\":\""+password+"\"\n" +
                 "\t}\n" +
                 "}";
         public void run()    //改寫Thread類別裡的run()方法
@@ -201,12 +208,12 @@ public class Login extends AppCompatActivity {
             //以執行緒處理的程序;
 
             // Http Post 試認證
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             try {
                 url = new URL(apiLocation); //建立 URL
                 connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
-                connection.setReadTimeout(5000); //設置讀取超時為5秒
-                connection.setConnectTimeout(10000); //設置連接網路超時為10秒
+                connection.setReadTimeout(2500); //設置讀取超時為2.5秒
+                connection.setConnectTimeout(5000); //設置連接網路超時為5秒
 
                 connection.setDoInput(true);//可從伺服器取得資料
                 connection.setDoOutput(true);//可寫入資料至伺服器
@@ -219,10 +226,9 @@ public class Login extends AppCompatActivity {
                 connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
 
 
-                Log.d("rsulot:","try5");
+
                 //Send request
                 DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
-                Log.d("rsulot:","try6");
                 wr.writeBytes (urlParameters);
                 wr.flush ();
                 wr.close ();
@@ -238,23 +244,31 @@ public class Login extends AppCompatActivity {
                 }
 
                 rd.close();
-                Log.d("rsulot:",response.toString());
+                Log.d("登入回應:",response.toString());
+
+                Login.this.finish();
 
 
 
             } catch (Exception e) {
                 String er = e.getMessage();
-                //e.printStackTrace();
-                //Log.d("error",e.getLocalizedMessage().toString());
-                Log.d("rsulot:","try2"+e);
+
+                Log.d("網路錯誤:","error"+e);
+
             }
+            //  無法啊
+            //Toast.makeText(Login.this,"test:",Toast.LENGTH_LONG).show();
 
-
-
-
-            Log.d("rsulot:","abc");
 
         }
+    }
+
+    public void showMsg(String msg){
+
+
+        Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
+
+
     }
 
 
