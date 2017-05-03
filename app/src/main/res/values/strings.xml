@@ -12,11 +12,11 @@
     <string name="loginAccountTitle">Enter Your ID:</string>
     <string name="submit">Submit</string>
     <string name="passwordTitle">Password:</string>
-    <string name="passwordRequest">6 to 8 characters, including two of characters: 1. capital letters(A~Z) or lowercase (a~z) 2.numbers (0~9 )</string>
-    <string name="idRequest">Passport Number or Taiwan national ID number</string>
+    <string name="passwordRequest">must 8 to 12 charecters</string>
+    <string name="idRequest">Passport or National ID number</string>
     <string name="forgetPW">forget password</string>
     <string name="newAccount">Sing in new Account</string>
-    <string name="passwordError001Len">must 6 to 8 charecters</string>
+    <string name="passwordError001Len">must 8 to 12 charecters</string>
     <string name="passwordError002Character">must including 1. capital letters or lowercase (A~Z)(a~z) 2. numbers (0~9)</string>
     <string name="loginSuceesfully">Login suceesfully</string>
     <string name="nameTitle">Name:</string>
@@ -32,5 +32,7 @@
     <string name="nameNoEmpty">Name is  blank</string>
     <string name="passwordError003dif">The two passwords must be the same</string>
     <string name="phoneTooShort">Phone Number must 10 charecters or more</string>
+    <string name="acconut">Account</string>
+    <string name="accoutCheck">Check</string>
 
 </resources>

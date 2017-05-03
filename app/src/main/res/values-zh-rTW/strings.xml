@@ -13,11 +13,11 @@
     <string name="loginAccountTitle">身份證字號:</string>
     <string name="submit">確認</string>
     <string name="passwordTitle">密碼:</string>
-    <string name="passwordRequest">6~8 個字元, 需含下列兩種字元:1. 英文大/小寫字元(A~Z)(a~z)  2.基本數字(0~9)</string>
+    <string name="passwordRequest">需為 8~12 字元</string>
     <string name="idRequest">請輸入身分證字號</string>
     <string name="forgetPW">忘記密碼</string>
     <string name="newAccount">新建帳號</string>
-    <string name="passwordError001Len">需為 6~8 字元</string>
+    <string name="passwordError001Len">需為 8~12 字元</string>
     <string name="passwordError002Character">需含下列兩種字元:1. 英文大/小寫字元(A~Z)(a~z)  2.基本數字(0~9)</string>
     <string name="loginSuceesfully">登入成功</string>
     <string name="nameTitle">真實姓名:</string>
@@ -33,6 +33,8 @@
     <string name="nameNoEmpty">姓名不得空白</string>
     <string name="passwordError003dif">兩次密碼必需相同</string>
     <string name="phoneTooShort">電話應10碼或以上</string>
+    <string name="acconut">帳號:</string>
+    <string name="accoutCheck">帳號檢核</string>
 
 
 </resources>

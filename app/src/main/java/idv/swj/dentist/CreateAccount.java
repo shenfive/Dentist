@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class CreateAccount extends AppCompatActivity {
 
-    EditText account,name,phone,email,password1,password2;
+    EditText account,name,phone,email,password1,password2,nID;
     RadioButton male,female;
     RadioGroup radioGroup;
     DatePicker datePicker;
@@ -39,11 +39,14 @@ public class CreateAccount extends AppCompatActivity {
         female = (RadioButton)findViewById(R.id.female);
         datePicker = (DatePicker)findViewById(R.id.datePicker);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
+        nID = (EditText)findViewById(R.id.nID);
 
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
+//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
+
+        account.requestFocus();
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -52,8 +55,6 @@ public class CreateAccount extends AppCompatActivity {
 
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(group.getWindowToken(), 0);
-
-
                 datePicker.requestFocus();
             }
         });
@@ -68,6 +69,8 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
+
+    //用正規表示法檢查是否 合於 Email 格式
     public String[] checkEmailFormat(String emal){
 
 
@@ -97,27 +100,27 @@ public class CreateAccount extends AppCompatActivity {
 
 
         //用正規表示法檢查是否包含英數字
-        String patternStr1 = "[a-zA-Z]{1}";
-        Pattern pattern1 = Pattern.compile(patternStr1);
-        Matcher matcher1 = pattern1.matcher(password1);
-        boolean matchFound1 = matcher1.find();
+//        String patternStr1 = "[a-zA-Z]{1}";
+//        Pattern pattern1 = Pattern.compile(patternStr1);
+//        Matcher matcher1 = pattern1.matcher(password1);
+//        boolean matchFound1 = matcher1.find();
+//
+//        String patternStr2 = "[0-9]{1}";
+//        Pattern pattern2 = Pattern.compile(patternStr2);
+//        Matcher matcher2 = pattern2.matcher(password1);
+//        boolean matchFound2 = matcher2.find();
+//        boolean matchFound = matchFound1 & matchFound2;
 
-        String patternStr2 = "[0-9]{1}";
-        Pattern pattern2 = Pattern.compile(patternStr2);
-        Matcher matcher2 = pattern2.matcher(password1);
-        boolean matchFound2 = matcher2.find();
-        boolean matchFound = matchFound1 & matchFound2;
 
-
-        if( (password1.length() < 6 ) || (password1.length() >8 ) ){
+        if( (password1.length() < 8 ) || (password1.length() >12 ) ){
             status[0] = "401";
             status[1] = getResources().getString(R.string.passwordError001Len);
-        }else if( !matchFound ){
-            status[0] = "402";
-            status[1] = getResources().getString(R.string.passwordError002Character);
-        }else if( !password1.equals(password2)) {
-            status[0] = "403";
-            status[1] = getResources().getString(R.string.passwordError003dif);
+//        }else if( !matchFound ){
+//            status[0] = "402";
+//            status[1] = getResources().getString(R.string.passwordError002Character);
+//        }else if( !password1.equals(password2)) {
+//            status[0] = "403";
+//            status[1] = getResources().getString(R.string.passwordError003dif);
         }else{
             status[0] = "200";
             status[1] = "true";
@@ -128,6 +131,8 @@ public class CreateAccount extends AppCompatActivity {
         return status;
     }
 
+
+    //檢查身份證編碼
     public String[] checkPID(String id){
         String[] status = {"",""};
         int[] num=new int[10];
@@ -181,6 +186,8 @@ public class CreateAccount extends AppCompatActivity {
         String[] checkStatus = {"",""};
         String acccountS,nameS,password1S,password2S,emailS,phoneS,genderS,birthdayS;
 
+
+        //檢查身份證格式是否正確
         acccountS = account.getText().toString();
         checkStatus = checkPID(acccountS);
         if(!checkStatus[0].equals("200")){
