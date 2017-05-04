@@ -35,6 +35,7 @@
     <string name="phoneTooShort">電話應10碼或以上</string>
     <string name="acconut">帳號:</string>
     <string name="accoutCheck">帳號檢核</string>
+    <string name="accountNoEmpty">帳號不得空白</string>
 
 
 </resources>

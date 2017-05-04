@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -12,6 +13,19 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -181,15 +195,26 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    public void submitCreatAccount(View v){
+
+
+    public void submitCreatAccount(View v) throws JSONException {
 
         String[] checkStatus = {"",""};
-        String acccountS,nameS,password1S,password2S,emailS,phoneS,genderS,birthdayS;
+        String acccountS,nameS,password1S,password2S,emailS,phoneS,genderS,birthdayS,idS;
+
+
+        //帳號不得空白
+        acccountS = account.getText().toString();
+        if(acccountS.length()<1){
+            Toast.makeText(this,getResources().getString(R.string.accountNoEmpty),Toast.LENGTH_SHORT).show();
+            account.requestFocus();
+            return;
+        }
 
 
         //檢查身份證格式是否正確
-        acccountS = account.getText().toString();
-        checkStatus = checkPID(acccountS);
+        idS = nID.getText().toString();
+        checkStatus = checkPID(idS);
         if(!checkStatus[0].equals("200")){
             Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
             account.requestFocus();
@@ -244,14 +269,124 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-        birthdayS = datePicker.getYear()+" "+(datePicker.getMonth()+1)+"/"+datePicker.getDayOfMonth();
+        String year = (datePicker.getYear()-1911)+"";
+        if(year.length()==1){ year = "00"+year;};
+        if(year.length()==2){ year = "0"+year;};
+
+        String month = (datePicker.getMonth()+1)+"";
+        if(month.length()==1){ month = "0"+month;}
+
+        String day = datePicker.getDayOfMonth()+"";
+        if(day.length()==1){ day = "0"+day;}
+
+        birthdayS = year+month+day;
         Toast.makeText(this, birthdayS+"檢查完", Toast.LENGTH_SHORT).show();
 
+
         // 接下來要打 API 了
+        JSONObject parameter = new JSONObject();
+        JSONObject header = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        header.put("Version","1.0");
+        header.put("CompanyId","4881017701");
+        header.put("ActionMode","AddPatient");
+
+        data.put("Account",acccountS);
+        data.put("PatientSN",idS);
+        data.put("PatientName",nameS);
+        data.put("PatientMobile",phoneS);
+        data.put("PatientPin",password1S);
+        data.put("PatientEmail",emailS);
+        data.put("Gender",genderS);
+        data.put("Birthday",birthdayS);
+
+        parameter.put("Header",header);
+        parameter.put("Data",data);
+
+        AddAccount addAccount = new AddAccount();
+        addAccount.parameter = parameter;
+        addAccount.start();
 
 
+    }
+
+    // 將西元日期轉換為民國日期
+//    private String getROCdateString(Date date){
+//
+//        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("YYYY");
+//        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MMdd");
+//
+//
+//        String rocYear = (Integer.parseInt(simpleDateFormat1.format(date)) - 1911) + "";
+//        if (rocYear.length() == 2){ rocYear = "0" + rocYear; }
+//
+//        return rocYear+simpleDateFormat2.format(date);
+//    }
 
 
+    private class AddAccount extends Thread
+    {
+        //類別裡的成員資料;
+        //類別裡的方法;
+        CreateAccount mainContext;
+
+        JSONObject parameter;
+
+
+        String apiLocation = "http://220.135.157.238:1113/api/PatientData/AddPatient";
+        URL url;
+        public void run()    //改寫Thread類別裡的run()方法
+        {
+            //以執行緒處理的程序;
+            HttpURLConnection connection;
+            try {
+
+                url = new URL(apiLocation); //建立 URL
+                connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
+
+                connection.setReadTimeout(5000); //設置讀取超時為2.5秒
+                connection.setConnectTimeout(10000); //設置連接網路超時為5秒
+                connection.setRequestMethod("POST"); //設置請求的方法為POST
+                connection.setInstanceFollowRedirects(true);
+
+                connection.setDoInput(true);//可從伺服器取得資料
+                connection.setDoOutput(true);//可寫入資料至伺服器
+                connection.setRequestMethod("POST"); //設置請求的方法為POST
+                connection.setRequestProperty("Content-Type","application/json");
+//                connection.setRequestProperty("charset", "utf-8");
+                connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
+                //Send request
+                DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
+
+                byte[] outputBytes = parameter.toString().getBytes("UTF-8");
+                wr.write(outputBytes);
+                wr.flush ();
+                wr.close ();
+
+
+                //Get Response
+                InputStream is = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+                JSONObject jsonObject1 = new JSONObject(response.toString());
+                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
+
+                rd.close();
+                Log.d("API 回應",parameter.toString()+"\n res:"+response.toString() +"\n status:"+string);
+
+
+            } catch (Exception e) {
+                String er = e.getMessage();
+                Log.d("網路錯誤:","error"+e);
+
+            }
+        }
     }
 
 

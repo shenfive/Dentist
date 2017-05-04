@@ -34,5 +34,6 @@
     <string name="phoneTooShort">Phone Number must 10 charecters or more</string>
     <string name="acconut">Account</string>
     <string name="accoutCheck">Check</string>
+    <string name="accountNoEmpty">Account is blank</string>
 
 </resources>
