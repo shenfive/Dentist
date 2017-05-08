@@ -3,6 +3,7 @@ package idv.swj.dentist;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 public class Login extends AppCompatActivity {
     EditText account,password;
     SharedPreferences loginPre;
+    LoginAsyncTaskgetNews loginAsyncTaskgetNews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class Login extends AppCompatActivity {
 
         String pass = password.getText().toString();
         String acc = account.getText().toString().toUpperCase();
+
+        Log.d("sub",acc);
 
 
         checkPasswordInput(acc,pass);
@@ -143,14 +147,28 @@ public class Login extends AppCompatActivity {
     private void checkPasswordInput(String account,String password){
 
 
+        String url = "http://220.135.157.238:1113/api/PatientData/LoginPatient";
 
-        TheLogin theLogin = new TheLogin();
-        theLogin.account = account;
-        theLogin.password = password;
-        theLogin.mainContext = this;
+        JSONObject jsonObject = new JSONObject();
+        JSONObject header = new JSONObject();
+        JSONObject data = new JSONObject();
+        try {
+            header.put("Version", "1.0");
+            header.put("CompanyId", "4881017701");
+            header.put("ActionMode", "LoginPatient");
+            data.put("Account", account);
+            data.put("PatientPin", password);
+            jsonObject.put("Header", header);
+            jsonObject.put("Data", data);
+            Log.d("Location","Json");
+            loginAsyncTaskgetNews = new LoginAsyncTaskgetNews();
+            loginAsyncTaskgetNews.execute(url,jsonObject.toString());
 
+        }catch (Exception e){
+            Log.d("json error",e.getLocalizedMessage());
 
-        theLogin.start();
+        }
+
 
     }
 
@@ -191,8 +209,8 @@ public class Login extends AppCompatActivity {
                 url = new URL(apiLocation); //建立 URL
                 connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
 
-                connection.setReadTimeout(5000); //設置讀取超時為2.5秒
-                connection.setConnectTimeout(10000); //設置連接網路超時為5秒
+                connection.setReadTimeout(2500); //設置讀取超時為2.5秒
+                connection.setConnectTimeout(5000); //設置連接網路超時為5秒
                 connection.setRequestMethod("POST"); //設置請求的方法為POST
                 connection.setInstanceFollowRedirects(true);
 
@@ -241,6 +259,124 @@ public class Login extends AppCompatActivity {
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
 
 
+    }
+
+
+    public class LoginAsyncTaskgetNews extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            //before works
+        }
+        @Override
+        protected String  doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            Log.d("Location","doInBackground");
+
+            try {
+                JSONObject jsonObject = new JSONObject(params[1]);
+                URL url = new URL(params[0]); //define the url we have to connect with
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
+                urlConnection.setConnectTimeout(10000);//set timeout to 10 seconds
+                urlConnection.setReadTimeout(5000);//設置讀取超時為5秒
+                urlConnection.setRequestMethod("POST"); //設置請求的方法為POST
+                urlConnection.setInstanceFollowRedirects(true);
+                urlConnection.setRequestProperty("Content-Type","application/json");
+                urlConnection.setDoInput(true);//可從伺服器取得資料
+                urlConnection.setDoOutput(true);//可寫入資料至伺服器
+                urlConnection.setUseCaches (false);//POST方法不能緩存數據,需手動設置使用緩存的值為false
+
+                DataOutputStream wr = new DataOutputStream (urlConnection.getOutputStream());
+
+                byte[] outputBytes = jsonObject.toString().getBytes("UTF-8");
+                wr.write(outputBytes);
+                wr.flush ();
+                wr.close ();
+                Log.d("Location","Send");
+
+                //Get Response
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuffer response = new StringBuffer();
+
+                while((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+                JSONObject jsonObject1 = new JSONObject(response.toString());
+                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
+
+                rd.close();
+                Log.d("Location","rd.close");
+
+                publishProgress(jsonObject1.toString()); // 取得回應後的處理
+                Log.d("Location","fini");
+
+
+            }catch (Exception ex){
+
+                Log.d("flag","error:"+ex.toString());
+            }
+            return null;
+        }
+
+
+
+        protected void onProgressUpdate(String... progress) {
+
+
+            JSONObject jsonObject;
+            JSONObject header;
+            JSONObject data;
+            try {
+                //display response data
+                jsonObject = new JSONObject(progress[0]);
+                header = jsonObject.getJSONObject("Header");
+
+
+                Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
+                Log.d("Fin:",header.getString("StatusCode"));
+
+                if (header.getString("StatusCode").equals("0000")) {
+                    data = jsonObject.getJSONObject("Data");
+                }
+
+
+            } catch (Exception ex) {
+
+            }
+
+        }
+
+        protected void onPostExecute(String  result2){
+
+
+        }
+
+
+
+
+    }
+
+    // this method convert any stream to string
+    public static String ConvertInputToStringNoChange(InputStream inputStream) {
+
+        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
+        String line ;
+        String linereultcal="";
+
+        try{
+            while((line=bureader.readLine())!=null) {
+
+                linereultcal+=line;
+
+            }
+            inputStream.close();
+
+
+        }catch (Exception ex){}
+
+        return linereultcal;
     }
 
 
