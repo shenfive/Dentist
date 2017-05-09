@@ -45,7 +45,6 @@
         android:layout_marginTop="0dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="DanDDDs"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/textView7"
         app:layout_constraintRight_toRightOf="parent"
@@ -82,7 +81,6 @@
         android:layout_marginTop="0dp"
         android:ems="10"
         android:inputType="textPassword"
-        android:text="123456789"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/nID"
         app:layout_constraintRight_toRightOf="@+id/nID"
@@ -132,11 +130,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:onClick="onClickForgetPassword"
         android:text="@string/forgetPW"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginEnd="8dp" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/textView11"
@@ -157,15 +156,4 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
 
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="status"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submit" />
 </android.support.constraint.ConstraintLayout>

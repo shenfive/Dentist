@@ -17,7 +17,8 @@
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0">
 
         <Button
             android:id="@+id/userName"
@@ -91,6 +92,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
@@ -172,7 +174,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonOnClick"
-            android:text="@string/tab1" />
+            android:text="@string/tab1"
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/tab2b"
@@ -180,7 +183,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonOnClick"
-            android:text="@string/tab2" />
+            android:text="@string/tab2"
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/tab3b"
@@ -188,7 +192,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonOnClick"
-            android:text="@string/tab3" />
+            android:text="@string/tab3"
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/tab4b"
@@ -196,7 +201,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonOnClick"
-            android:text="@string/tab4" />
+            android:text="@string/tab4"
+            android:textSize="13sp" />
 
 
     </LinearLayout>

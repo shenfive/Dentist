@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="idv.swj.dentist.ModifyData"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="78dp"
+        android:layout_height="18dp"
+        android:text="@string/acconut"
+        android:textSize="16sp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <TextView
+        android:id="@+id/maAccount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="32dp"
+        app:layout_constraintRight_toLeftOf="@+id/button4"
+        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toRightOf="@+id/textView25"
+        android:layout_marginLeft="8dp" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nameTitle"
+        android:textSize="16sp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView25"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textView25"
+        app:layout_constraintTop_toTopOf="@+id/maName"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickChangePassword"
+        android:text="變更密碼"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/emailTitle"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="@+id/maEmail"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textView35"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView35" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/gender"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView28"
+        app:layout_constraintRight_toRightOf="@+id/textView28"
+        app:layout_constraintTop_toTopOf="@+id/maMale" />
+
+    <TextView
+        android:id="@+id/textView35"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/telephoneNum"
+        android:textSize="16sp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textView27"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView27"
+        app:layout_constraintTop_toTopOf="@+id/maPhone"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:text="@string/birthday"
+        android:textSize="16sp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView29"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textView29"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="@+id/maBirthday"
+        android:layout_marginTop="32dp" />
+
+    <RadioButton
+        android:id="@+id/maFemale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="9dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/female"
+        app:layout_constraintLeft_toRightOf="@+id/maMale"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintTop_toTopOf="@+id/maMale"
+        android:layout_marginTop="0dp" />
+
+    <RadioButton
+        android:id="@+id/maMale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/male"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/maEmail"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/maEmail" />
+
+    <DatePicker
+        android:id="@+id/maBirthday"
+        android:layout_width="0dp"
+        android:layout_height="120sp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/maMale"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/maEmail"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/maEmail" />
+
+    <EditText
+        android:id="@+id/maName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/button4"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/textView27"
+        android:layout_marginLeft="8dp" />
+
+    <EditText
+        android:id="@+id/maEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toBottomOf="@+id/maPhone"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/maPhone"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/maPhone" />
+
+    <EditText
+        android:id="@+id/maPhone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/maName"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/maName"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/maName" />
+
+    <Button
+        android:id="@+id/maSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickSubmit"
+        android:text="@string/submit"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/maBirthday"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/maBirthday" />
+
+</android.support.constraint.ConstraintLayout>

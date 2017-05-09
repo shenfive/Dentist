@@ -1,4 +1,5 @@
 <resources>
+    <string name="api">http://220.135.157.238:1113</string>
     <string name="app_name">Dentist</string>
     <string name="title">Dentist</string>
     <string name="tab1">Intro</string>
@@ -18,7 +19,7 @@
     <string name="newAccount">Sing in new Account</string>
     <string name="passwordError001Len">must 8 to 12 charecters</string>
     <string name="passwordError002Character">must including 1. capital letters or lowercase (A~Z)(a~z) 2. numbers (0~9)</string>
-    <string name="loginSuceesfully">Login suceesfully</string>
+    <string name="loginSuceesfully">Login Sucees</string>
     <string name="nameTitle">Name:</string>
     <string name="rePassword">Confirm password</string>
     <string name="telephoneNum">PhoneNum</string>
@@ -35,5 +36,12 @@
     <string name="acconut">Account</string>
     <string name="accoutCheck">Check</string>
     <string name="accountNoEmpty">Account is blank</string>
+    <string name="forgetPassworCheckEmail">Please check your email for new password</string>
+    <string name="accountCreated">New Account Created</string>
+    <string name="logoutSuceesfully">Logout Sucess</string>
+    <string name="logout">Logout</string>
+    <string name="passwordChange">Password Change</string>
+    <string name="modifyYouData">Modify Your Data</string>
+    <string name="wait">Waitting.....</string>
 
 </resources>

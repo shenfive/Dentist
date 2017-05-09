@@ -1,6 +1,8 @@
 package idv.swj.dentist;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -17,37 +19,43 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 
 public class Login extends AppCompatActivity {
     EditText account,password;
     SharedPreferences loginPre;
-    LoginAsyncTaskgetNews loginAsyncTaskgetNews;
+    LoginAsyncTask loginAsyncTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        account.setText("a123456789");
-//        password.setText("a12345");
+
 
         try {
             getSupportActionBar().hide(); //隱藏標題
-            //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
         }catch (Exception e){
             Log.d("error",e.getLocalizedMessage());
-
         }
         account = (EditText)findViewById(R.id.nID);
         password = (EditText)findViewById(R.id.password);
         loginPre = getSharedPreferences("loginStatus",0);
+    }
 
-
+    @Override
+    protected void onResume(){
+        super.onResume();
+        String loginstatus = loginPre.getString("status","logout");
+        if (loginstatus.equals("login")){
+            this.finish();
+        }
     }
 
     public void submit(View v) {
@@ -57,9 +65,13 @@ public class Login extends AppCompatActivity {
 
         Log.d("sub",acc);
 
-
         checkPasswordInput(acc,pass);
 
+    }
+
+    public void onClickForgetPassword(View v){
+        Intent intent = new Intent(this,ForgetPassword.class);
+        startActivity(intent);
     }
 
     public String[] checkPassword(String password){
@@ -146,8 +158,9 @@ public class Login extends AppCompatActivity {
 
     private void checkPasswordInput(String account,String password){
 
+//        password = bin2hex(password);
 
-        String url = "http://220.135.157.238:1113/api/PatientData/LoginPatient";
+        String url = getString(R.string.api)+"/api/PatientData/LoginPatient";
 
         JSONObject jsonObject = new JSONObject();
         JSONObject header = new JSONObject();
@@ -161,12 +174,16 @@ public class Login extends AppCompatActivity {
             jsonObject.put("Header", header);
             jsonObject.put("Data", data);
             Log.d("Location","Json");
-            loginAsyncTaskgetNews = new LoginAsyncTaskgetNews();
-            loginAsyncTaskgetNews.execute(url,jsonObject.toString());
+            loginAsyncTask = new LoginAsyncTask();
+            loginAsyncTask.context = this;
+            ProgressDialog progressDialog=new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.wait));
+            progressDialog.show();
+            loginAsyncTask.progressDialog = progressDialog;
+            loginAsyncTask.execute(url,jsonObject.toString());
 
         }catch (Exception e){
             Log.d("json error",e.getLocalizedMessage());
-
         }
 
 
@@ -179,79 +196,7 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private class TheLogin extends Thread
-    {
-        //類別裡的成員資料;
-        //類別裡的方法;
-        String account;
-        String password;
-        Login mainContext;
 
-        JSONObject jsonObject = new JSONObject();
-        JSONObject header = new JSONObject();
-        JSONObject data = new JSONObject();
-
-        String apiLocation = "http://220.135.157.238:1113/api/PatientData/LoginPatient";
-        URL url;
-        public void run()    //改寫Thread類別裡的run()方法
-        {
-            //以執行緒處理的程序;
-            HttpURLConnection connection;
-            try {
-                header.put("Version","1.0");
-                header.put("CompanyId","4881017701");
-                header.put("ActionMode","LoginPatient");
-                data.put("Account",account);
-                data.put("PatientPin",password);
-                jsonObject.put("Header",header);
-                jsonObject.put("Data",data);
-
-                url = new URL(apiLocation); //建立 URL
-                connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
-
-                connection.setReadTimeout(2500); //設置讀取超時為2.5秒
-                connection.setConnectTimeout(5000); //設置連接網路超時為5秒
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setInstanceFollowRedirects(true);
-
-                connection.setDoInput(true);//可從伺服器取得資料
-                connection.setDoOutput(true);//可寫入資料至伺服器
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setRequestProperty("Content-Type","application/json");
-//                connection.setRequestProperty("charset", "utf-8");
-                connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
-                //Send request
-                DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
-
-                byte[] outputBytes = jsonObject.toString().getBytes("UTF-8");
-                wr.write(outputBytes);
-                wr.flush ();
-                wr.close ();
-
-
-                //Get Response
-                InputStream is = connection.getInputStream();
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-                StringBuffer response = new StringBuffer();
-                while((line = rd.readLine()) != null) {
-                    response.append(line);
-                    response.append('\r');
-                }
-                JSONObject jsonObject1 = new JSONObject(response.toString());
-                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
-
-                rd.close();
-                Log.d("登入回應",jsonObject.toString()+"\n res:"+response.toString() +"\n status:"+string);
-
-
-            } catch (Exception e) {
-                String er = e.getMessage();
-                Log.d("網路錯誤:","error"+e);
-
-            }
-        }
-    }
 
     public void showMsg(String msg){
 
@@ -262,22 +207,27 @@ public class Login extends AppCompatActivity {
     }
 
 
-    public class LoginAsyncTaskgetNews extends AsyncTask<String, String, String> {
+    public class LoginAsyncTask extends AsyncTask<String, String, String> {
+
+        Activity context;
+        ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             //before works
         }
         @Override
         protected String  doInBackground(String... params) {
-            // TODO Auto-generated method stub
+
+
             Log.d("Location","doInBackground");
 
             try {
                 JSONObject jsonObject = new JSONObject(params[1]);
                 URL url = new URL(params[0]); //define the url we have to connect with
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
-                urlConnection.setConnectTimeout(10000);//set timeout to 10 seconds
-                urlConnection.setReadTimeout(5000);//設置讀取超時為5秒
+                urlConnection.setConnectTimeout(13000);//set timeout to 10 seconds
+                urlConnection.setReadTimeout(7000);//設置讀取超時為5秒
                 urlConnection.setRequestMethod("POST"); //設置請求的方法為POST
                 urlConnection.setInstanceFollowRedirects(true);
                 urlConnection.setRequestProperty("Content-Type","application/json");
@@ -291,7 +241,6 @@ public class Login extends AppCompatActivity {
                 wr.write(outputBytes);
                 wr.flush ();
                 wr.close ();
-                Log.d("Location","Send");
 
                 //Get Response
                 InputStream is = urlConnection.getInputStream();
@@ -307,10 +256,7 @@ public class Login extends AppCompatActivity {
                 String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
-                Log.d("Location","rd.close");
-
                 publishProgress(jsonObject1.toString()); // 取得回應後的處理
-                Log.d("Location","fini");
 
 
             }catch (Exception ex){
@@ -324,7 +270,7 @@ public class Login extends AppCompatActivity {
 
         protected void onProgressUpdate(String... progress) {
 
-
+            progressDialog.cancel();
             JSONObject jsonObject;
             JSONObject header;
             JSONObject data;
@@ -334,16 +280,34 @@ public class Login extends AppCompatActivity {
                 header = jsonObject.getJSONObject("Header");
 
 
-                Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
+
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
                     data = jsonObject.getJSONObject("Data");
+                    Log.d("data:",data.toString());
+
+                    SharedPreferences.Editor editor = loginPre.edit();
+
+                    editor.putString("status","login")
+                            .putString("Account", data.getString("Account"))
+                            .putString("PatientSN", data.getString("PatientSN"))
+                            .putString("PatientName", data.getString("PatientName"))
+                            .putString("PatientMobile", data.getString("PatientMobile"))
+                            .putString("PatientEmail", data.getString("PatientEmail"))
+                            .putString("Gender", data.getString("Gender"))
+                            .putString("Birthday", data.getString("Birthday"))
+                            .commit();
+
+                    Toast.makeText(getApplicationContext(),"Wellcome, " +data.getString("PatientName"),Toast.LENGTH_LONG).show();
+                    context.finish();
+                }else{
+                    Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
                 }
 
 
             } catch (Exception ex) {
-
+                    Log.d("error",ex.getLocalizedMessage());
             }
 
         }
@@ -353,31 +317,21 @@ public class Login extends AppCompatActivity {
 
         }
 
-
-
-
     }
 
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
-
-            }
-            inputStream.close();
-
-
-        }catch (Exception ex){}
-
-        return linereultcal;
+    private static byte [] getHash(String password) {
+        MessageDigest digest = null ;
+        try {
+            digest = MessageDigest. getInstance( "SHA-256");
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        digest.reset();
+        return digest.digest(password.getBytes());
     }
 
-
+    public static String bin2hex(String strForEncrypt) {
+        byte [] data = getHash(strForEncrypt);
+        return String.format( "%0" + (data.length * 2) + "X", new BigInteger(1, data));
+    }
 }

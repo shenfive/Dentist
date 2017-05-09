@@ -1,6 +1,10 @@
 package idv.swj.dentist;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,11 +24,13 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -36,6 +42,7 @@ public class CreateAccount extends AppCompatActivity {
     RadioButton male,female;
     RadioGroup radioGroup;
     DatePicker datePicker;
+    CreatAccountAsyncTask creatAccountAsyncTask;
 
 
     @Override
@@ -74,9 +81,16 @@ public class CreateAccount extends AppCompatActivity {
         });
 
         long today = new Date().getTime();
+        SimpleDateFormat simpleDateFormater = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat yearFormater = new SimpleDateFormat("yyyy");
+        String year = (Integer.parseInt(yearFormater.format(new Date())) - 1) +
+                 "";
 
-
-        datePicker.setMaxDate(today - 1000);
+        try {
+            datePicker.setMaxDate(simpleDateFormater.parse(year+"1231").getTime());
+            datePicker.setMinDate(simpleDateFormater.parse("19000101").getTime());
+        } catch (ParseException e) {            e.printStackTrace();
+        }
         datePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
 
@@ -113,28 +127,9 @@ public class CreateAccount extends AppCompatActivity {
         String status[] = {"",""};
 
 
-        //用正規表示法檢查是否包含英數字
-//        String patternStr1 = "[a-zA-Z]{1}";
-//        Pattern pattern1 = Pattern.compile(patternStr1);
-//        Matcher matcher1 = pattern1.matcher(password1);
-//        boolean matchFound1 = matcher1.find();
-//
-//        String patternStr2 = "[0-9]{1}";
-//        Pattern pattern2 = Pattern.compile(patternStr2);
-//        Matcher matcher2 = pattern2.matcher(password1);
-//        boolean matchFound2 = matcher2.find();
-//        boolean matchFound = matchFound1 & matchFound2;
-
-
         if( (password1.length() < 8 ) || (password1.length() >12 ) ){
             status[0] = "401";
             status[1] = getResources().getString(R.string.passwordError001Len);
-//        }else if( !matchFound ){
-//            status[0] = "402";
-//            status[1] = getResources().getString(R.string.passwordError002Character);
-//        }else if( !password1.equals(password2)) {
-//            status[0] = "403";
-//            status[1] = getResources().getString(R.string.passwordError003dif);
         }else{
             status[0] = "200";
             status[1] = "true";
@@ -260,18 +255,16 @@ public class CreateAccount extends AppCompatActivity {
         }
 
         if(male.isChecked()){
-            genderS = "male";
+            genderS = "M";
         }else if(female.isChecked()){
-            genderS = "female";
+            genderS = "F";
         }else {
             Toast.makeText(this, getResources().getString(R.string.gender), Toast.LENGTH_SHORT).show();
             radioGroup.requestFocus();
             return;
         }
 
-        String year = (datePicker.getYear()-1911)+"";
-        if(year.length()==1){ year = "00"+year;};
-        if(year.length()==2){ year = "0"+year;};
+        String year = datePicker.getYear()+"";
 
         String month = (datePicker.getMonth()+1)+"";
         if(month.length()==1){ month = "0"+month;}
@@ -280,114 +273,183 @@ public class CreateAccount extends AppCompatActivity {
         if(day.length()==1){ day = "0"+day;}
 
         birthdayS = year+month+day;
-        Toast.makeText(this, birthdayS+"檢查完", Toast.LENGTH_SHORT).show();
+
+//        password1S = bin2hex(birthdayS);
+
 
 
         // 接下來要打 API 了
-        JSONObject parameter = new JSONObject();
+
+        String url = getString(R.string.api)+"/api/PatientData/AddPatient";
+
+        JSONObject jsonObject = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
 
-        header.put("Version","1.0");
-        header.put("CompanyId","4881017701");
-        header.put("ActionMode","AddPatient");
+        try {
+            header.put("Version", "1.0");
+            header.put("CompanyId", "4881017701");
+            header.put("ActionMode", "AddPatient");
 
-        data.put("Account",acccountS);
-        data.put("PatientSN",idS);
-        data.put("PatientName",nameS);
-        data.put("PatientMobile",phoneS);
-        data.put("PatientPin",password1S);
-        data.put("PatientEmail",emailS);
-        data.put("Gender",genderS);
-        data.put("Birthday",birthdayS);
+            data.put("Account", acccountS);
+            data.put("PatientSN", idS);
+            data.put("PatientName", nameS);
+            data.put("PatientMobile", phoneS);
+            data.put("PatientPin", password1S);
+            data.put("PatientEmail", emailS);
+            data.put("Gender", genderS);
+            data.put("Birthday", birthdayS);
 
-        parameter.put("Header",header);
-        parameter.put("Data",data);
+            jsonObject.put("Header", header);
+            jsonObject.put("Data", data);
 
-        AddAccount addAccount = new AddAccount();
-        addAccount.parameter = parameter;
-        addAccount.start();
+
+            creatAccountAsyncTask = new CreatAccountAsyncTask();
+            creatAccountAsyncTask.context = this;
+            ProgressDialog progressDialog=new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.wait));
+            progressDialog.show();
+            creatAccountAsyncTask.progressDialog = progressDialog;
+
+            creatAccountAsyncTask.execute(url,jsonObject.toString());
+
+        }catch (Exception ex){
+
+
+        }
 
 
     }
+    public class CreatAccountAsyncTask extends AsyncTask<String, String, String> {
 
-    // 將西元日期轉換為民國日期
-//    private String getROCdateString(Date date){
-//
-//        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("YYYY");
-//        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MMdd");
-//
-//
-//        String rocYear = (Integer.parseInt(simpleDateFormat1.format(date)) - 1911) + "";
-//        if (rocYear.length() == 2){ rocYear = "0" + rocYear; }
-//
-//        return rocYear+simpleDateFormat2.format(date);
-//    }
+        Activity context;
+        ProgressDialog progressDialog;
 
+        @Override
+        protected void onPreExecute() {
+            //before works
+        }
+        @Override
+        protected String  doInBackground(String... params) {
 
-    private class AddAccount extends Thread
-    {
-        //類別裡的成員資料;
-        //類別裡的方法;
-        CreateAccount mainContext;
+            Log.d("Location","doInBackground");
 
-        JSONObject parameter;
-
-
-        String apiLocation = "http://220.135.157.238:1113/api/PatientData/AddPatient";
-        URL url;
-        public void run()    //改寫Thread類別裡的run()方法
-        {
-            //以執行緒處理的程序;
-            HttpURLConnection connection;
             try {
+                JSONObject jsonObject = new JSONObject(params[1]);
+                URL url = new URL(params[0]); //define the url we have to connect with
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
+                urlConnection.setConnectTimeout(13000);//set timeout to 10 seconds
+                urlConnection.setReadTimeout(7000);//設置讀取超時為5秒
+                urlConnection.setRequestMethod("POST"); //設置請求的方法為POST
+                urlConnection.setInstanceFollowRedirects(true);
+                urlConnection.setRequestProperty("Content-Type","application/json");
+                urlConnection.setDoInput(true);//可從伺服器取得資料
+                urlConnection.setDoOutput(true);//可寫入資料至伺服器
+                urlConnection.setUseCaches (false);//POST方法不能緩存數據,需手動設置使用緩存的值為false
 
-                url = new URL(apiLocation); //建立 URL
-                connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
+                DataOutputStream wr = new DataOutputStream (urlConnection.getOutputStream());
 
-                connection.setReadTimeout(5000); //設置讀取超時為2.5秒
-                connection.setConnectTimeout(10000); //設置連接網路超時為5秒
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setInstanceFollowRedirects(true);
-
-                connection.setDoInput(true);//可從伺服器取得資料
-                connection.setDoOutput(true);//可寫入資料至伺服器
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setRequestProperty("Content-Type","application/json");
-//                connection.setRequestProperty("charset", "utf-8");
-                connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
-                //Send request
-                DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
-
-                byte[] outputBytes = parameter.toString().getBytes("UTF-8");
+                byte[] outputBytes = jsonObject.toString().getBytes("UTF-8");
                 wr.write(outputBytes);
                 wr.flush ();
                 wr.close ();
 
-
                 //Get Response
-                InputStream is = connection.getInputStream();
+                InputStream is = urlConnection.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
                 StringBuffer response = new StringBuffer();
+
                 while((line = rd.readLine()) != null) {
                     response.append(line);
                     response.append('\r');
                 }
-                JSONObject jsonObject1 = new JSONObject(response.toString());
-                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
-                Log.d("API 回應",parameter.toString()+"\n res:"+response.toString() +"\n status:"+string);
+
+                Log.d("res",response.toString());
+
+                publishProgress(response.toString(),params[1]); // 取得回應後的處理
 
 
-            } catch (Exception e) {
-                String er = e.getMessage();
-                Log.d("網路錯誤:","error"+e);
+            }catch (Exception ex){
 
+                Log.d("flag","error:"+ex.toString());
             }
+            return null;
         }
+
+
+
+        protected void onProgressUpdate(String... progress) {
+
+            progressDialog.cancel();
+
+
+            JSONObject jsonObject;
+            JSONObject header;
+            JSONObject data;
+            try {
+                //display response data
+                jsonObject = new JSONObject(progress[0]);
+                header = jsonObject.getJSONObject("Header");
+
+
+
+
+                Log.d("Fin",header.getString("StatusCode"));
+                Log.d("Fin2",header.getString("StatusCode").equals("0000")+"");
+
+                if (header.getString("StatusCode").equals("0000")) {
+
+                    data = new JSONObject(progress[1]).getJSONObject("Data");
+
+                    Toast.makeText(getApplicationContext(),getString(R.string.accountCreated),Toast.LENGTH_LONG).show();
+                    SharedPreferences loginPre = getSharedPreferences("loginStatus",0);
+                    SharedPreferences.Editor editor = loginPre.edit();
+                    editor.putString("status","login")
+                            .putString("Account", data.getString("Account"))
+                            .putString("PatientSN", data.getString("PatientSN"))
+                            .putString("PatientName", data.getString("PatientName"))
+                            .putString("PatientMobile", data.getString("PatientMobile"))
+                            .putString("PatientEmail", data.getString("PatientEmail"))
+                            .putString("Gender", data.getString("Gender"))
+                            .putString("Birthday", data.getString("Birthday"))
+                            .commit();
+                    context.finish();
+                }else{
+                    Toast.makeText(getApplicationContext(),header.getString("StatusCode"),Toast.LENGTH_LONG).show();
+                }
+
+            } catch (Exception ex) {
+                Log.d("error",ex.getLocalizedMessage());
+            }
+
+        }
+
+        protected void onPostExecute(String  result2){
+
+
+        }
+
     }
+
+    private static byte [] getHash(String password) {
+        MessageDigest digest = null ;
+        try {
+            digest = MessageDigest. getInstance( "SHA-256");
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        digest.reset();
+        return digest.digest(password.getBytes());
+    }
+
+    public static String bin2hex(String strForEncrypt) {
+        byte [] data = getHash(strForEncrypt);
+        return String.format( "%0" + (data.length * 2) + "X", new BigInteger(1, data));
+    }
+
 
 
 }
