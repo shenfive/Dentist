@@ -44,4 +44,8 @@
     <string name="passwordChange">变更密码</string>
     <string name="modifyYouData">修改资料</string>
     <string name="wait">连线中....</string>
+    <string name="networNotWork">网路不通，请确认网路状态</string>
+    <string name="newPassword">新密码</string>
+    <string name="oldPassword">旧密码</string>
+    <string name="passwordChanged">己变更密码</string>
 </resources>

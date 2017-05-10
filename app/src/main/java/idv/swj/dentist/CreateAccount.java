@@ -98,101 +98,14 @@ public class CreateAccount extends AppCompatActivity {
     }
 
 
-    //用正規表示法檢查是否 合於 Email 格式
-    public String[] checkEmailFormat(String emal){
-
-
-        String status[] = {"",""};
-
-        //用正規表示法檢查是否包含英數字
-        Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(emal);
-        boolean matchFound = matcher.find();
-
-        if(matchFound){
-            status[0] = "200";
-            status[1] = "格式正確";
-        }
-        else {
-            status[0] = "400";
-            status[1] = "電子郵件格式不正確";
-        }
-        return status;
-
-
-    }
-
-    public String[] checkPassword(String password1,String password2){
-
-        String status[] = {"",""};
-
-
-        if( (password1.length() < 8 ) || (password1.length() >12 ) ){
-            status[0] = "401";
-            status[1] = getResources().getString(R.string.passwordError001Len);
-        }else{
-            status[0] = "200";
-            status[1] = "true";
-        }
 
 
 
-        return status;
-    }
-
-
-    //檢查身份證編碼
-    public String[] checkPID(String id){
-        String[] status = {"",""};
-        int[] num=new int[10];
-        int[] rdd={10,11,12,13,14,15,16,17,34,18,19,20,21,22,35,23,24,25,26,27,28,29,32,30,31,33};
-        id=id.toUpperCase();
-
-        if(id.length() != 10){
-            status[0] = "401";
-            status[1] = "身份證字號格式錯誤, 長度必需為 10 碼";
-            return status;
-        }
-
-        if(id.charAt(0)<'A'||id.charAt(0)>'Z'){
-            status[0] = "402";
-            status[1] = "身份證字號格式錯誤, 第一個字母為英文";
-            return status;
-        }
-        if(id.charAt(1)!='1' && id.charAt(1)!='2'){
-            status[0] = "403";
-            status[1] = "身份證字號格式錯誤, 第二個字為數字 1 或 2";
-            return status;
-        }
-        for(int i=1;i<10;i++){
-            if(id.charAt(i)<'0'||id.charAt(i)>'9'){
-                status[0] = "404";
-                status[1] = "身份證字號格式錯誤, 第 3~9 個字為數字 0~9";
-                return status;
-            }
-        }
-        for(int i=1;i<10;i++){
-            num[i]=(id.charAt(i)-'0');
-        }
-        num[0]=rdd[id.charAt(0)-'A'];
-        int sum=((int)num[0]/10+(num[0]%10)*9);
-        for(int i=0;i<8;i++){
-            sum+=num[i+1]*(8-i);
-        }
-        if(10-sum%10==num[9]) {
-            status[0] = "200";
-            status[1] = "身份證字號格式正確";
-        }else {
-            status[0] = "405";
-            status[1] = "身份證字號格式錯誤, 檢查碼錯誤, 請再次核對";
-        }
-        return status;
-
-    }
 
 
 
     public void submitCreatAccount(View v) throws JSONException {
+        if(!Tools.checkNetworkConnected(this)){return;};
 
         String[] checkStatus = {"",""};
         String acccountS,nameS,password1S,password2S,emailS,phoneS,genderS,birthdayS,idS;
@@ -209,7 +122,7 @@ public class CreateAccount extends AppCompatActivity {
 
         //檢查身份證格式是否正確
         idS = nID.getText().toString();
-        checkStatus = checkPID(idS);
+        checkStatus = Tools.checkPID(idS);
         if(!checkStatus[0].equals("200")){
             Toast.makeText(this,checkStatus[1],Toast.LENGTH_SHORT).show();
             account.requestFocus();
@@ -226,7 +139,7 @@ public class CreateAccount extends AppCompatActivity {
 
         password1S = password1.getText().toString();
         password2S = password2.getText().toString();
-        checkStatus = checkPassword(password1S,password2S);
+        checkStatus = Tools.checkPassword(this,password1S,password2S);
         if (!checkStatus[0].equals("200")) {
             Toast.makeText(this, checkStatus[1], Toast.LENGTH_SHORT).show();
             if (checkStatus[0].equals("403")){
@@ -247,7 +160,7 @@ public class CreateAccount extends AppCompatActivity {
 
 
         emailS = email.getText().toString();
-        checkStatus = checkEmailFormat(emailS);
+        checkStatus = Tools.checkEmailFormat(emailS);
         if(!checkStatus[0].equals("200")) {
             Toast.makeText(this, checkStatus[1], Toast.LENGTH_SHORT).show();
             email.requestFocus();
@@ -274,7 +187,10 @@ public class CreateAccount extends AppCompatActivity {
 
         birthdayS = year+month+day;
 
-//        password1S = bin2hex(birthdayS);
+        password1S = Tools.bin2hex(password1S);
+
+
+        Log.d("Hex:",password1S);
 
 
 
@@ -434,21 +350,7 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    private static byte [] getHash(String password) {
-        MessageDigest digest = null ;
-        try {
-            digest = MessageDigest. getInstance( "SHA-256");
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-        }
-        digest.reset();
-        return digest.digest(password.getBytes());
-    }
 
-    public static String bin2hex(String strForEncrypt) {
-        byte [] data = getHash(strForEncrypt);
-        return String.format( "%0" + (data.length * 2) + "X", new BigInteger(1, data));
-    }
 
 
 

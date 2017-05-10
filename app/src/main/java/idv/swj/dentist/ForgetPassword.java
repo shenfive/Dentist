@@ -37,6 +37,8 @@ public class ForgetPassword extends AppCompatActivity {
     }
 
     public void onClickFGPassword(View v){
+        if(!Tools.checkNetworkConnected(this)){return;};
+
         //檢查是否有帳號
         String inputAccout = account.getText().toString();
         String inputEmail = email.getText().toString();
@@ -46,7 +48,7 @@ public class ForgetPassword extends AppCompatActivity {
             return;
         }
 
-        String[] emailStatus = checkEmailFormat(inputEmail);
+        String[] emailStatus = Tools.checkEmailFormat(inputEmail);
         if(!emailStatus[0].equals("200")){
             Toast.makeText(this,emailStatus[1],Toast.LENGTH_LONG).show();
             return;
@@ -60,7 +62,7 @@ public class ForgetPassword extends AppCompatActivity {
             header.put("Version", "1.0");
             header.put("CompanyId", "4881017701");
             header.put("ActionMode", "ForgetPatientPin");
-            data.put("Account", inputAccout);
+            data.put("Account", inputAccout.toUpperCase());
             data.put("Email",inputEmail);
             jsonObject.put("Header", header);
             jsonObject.put("Data", data);
@@ -71,6 +73,7 @@ public class ForgetPassword extends AppCompatActivity {
             progressDialog.setMessage(getString(R.string.wait));
             progressDialog.show();
             forgetPasswordAsyncTask.progressDialog = progressDialog;
+            Log.d(url,jsonObject.toString());
             forgetPasswordAsyncTask.execute(url,jsonObject.toString());
 
         }catch (Exception e){
@@ -79,28 +82,6 @@ public class ForgetPassword extends AppCompatActivity {
 
     }
 
-    public String[] checkEmailFormat(String emal){
-
-
-        String status[] = {"",""};
-
-        //用正規表示法檢查是否包含英數字
-        Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(emal);
-        boolean matchFound = matcher.find();
-
-        if(matchFound){
-            status[0] = "200";
-            status[1] = "格式正確";
-        }
-        else {
-            status[0] = "400";
-            status[1] = "電子郵件格式不正確";
-        }
-        return status;
-
-
-    }
 
     public class ForgetPasswordAsyncTask extends AsyncTask<String, String, String> {
 
@@ -146,12 +127,10 @@ public class ForgetPassword extends AppCompatActivity {
                     response.append(line);
                     response.append('\r');
                 }
-                JSONObject jsonObject1 = new JSONObject(response.toString());
-                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
 
-                publishProgress(jsonObject1.toString()); // 取得回應後的處理
+                publishProgress(response.toString()); // 取得回應後的處理
 
 
             }catch (Exception ex){
@@ -164,11 +143,11 @@ public class ForgetPassword extends AppCompatActivity {
 
 
         protected void onProgressUpdate(String... progress) {
+            progressDialog.cancel();
 
 
             JSONObject jsonObject;
             JSONObject header;
-            JSONObject data;
             try {
                 //display response data
                 jsonObject = new JSONObject(progress[0]);

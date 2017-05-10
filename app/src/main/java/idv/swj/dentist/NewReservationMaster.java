@@ -1,8 +1,11 @@
 package idv.swj.dentist;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +33,9 @@ public class NewReservationMaster extends AppCompatActivity {
     String[] doctorList;
     SharedPreferences loginPre;
     TextView loginName;
+    DrAppointmentAsyncTask drAppointmentAsyncTask;
+    JSONObject[] allDrList;
+    JSONObject[] doctorAppointment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +43,7 @@ public class NewReservationMaster extends AppCompatActivity {
         setContentView(R.layout.activity_new_reservation_master);
 
         getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
+//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
         loginName = (TextView)findViewById(R.id.loginName);
@@ -52,40 +58,31 @@ public class NewReservationMaster extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMM");
 
 
+
+
+        String url = getString(R.string.api) + "/api/AppointmentData/GetDoctorsAppointment";
         try {
             header.put("Version","1.0");
             header.put("CompanyId","4881017701");
             header.put("ActionMode","GetDoctorsAppointment");
 
-
-            Date nowDate = new Date();
             data.put("StartMonth",simpleDateFormat.format(new Date()));
 
             parameter.put("Header",header);
             parameter.put("Data",data);
 
+            drAppointmentAsyncTask = new DrAppointmentAsyncTask();
+            drAppointmentAsyncTask.context = this;
+            drAppointmentAsyncTask.execute(url,parameter.toString());
+
         }catch (Exception e ){
             Log.d("JSonE",e.getLocalizedMessage());
         }
-
-        GetDoctorsAppointment getDoctorsAppointment = new GetDoctorsAppointment();
-        getDoctorsAppointment.mainContext = this;
-        getDoctorsAppointment.parameter = parameter;
-        getDoctorsAppointment.apiLocation = "http://220.135.157.238:1113/api/AppointmentData/GetDoctorsAppointment";
-        getDoctorsAppointment.start();
-
-
-
-
-
-
-
 
 
     }
 
     public void setDoctorList(){
-
 
         // 設定醫生選單
 
@@ -112,106 +109,139 @@ public class NewReservationMaster extends AppCompatActivity {
 
     private void checkLoingStatus(){
 
-        //暫時以登入狀態測試,
-        loginName.setText("Welcome:\n"+"Testing");
-        Toast.makeText(this,"Testing",Toast.LENGTH_SHORT).show();
-        return;
+
+        //己登入測試
+        String username = loginPre.getString("Account","nameError404");
 
 
-//        //己登入測試
-//        String username = loginPre.getString("name","nameError404");
-//        Toast.makeText(this,username,Toast.LENGTH_SHORT).show();
-//
-//
-//        if(username.equals("nameError404"))
-//        {
-//            AlertDialog.Builder MyAlertDialog = new AlertDialog.Builder(this);
-//
-//            MyAlertDialog.setTitle("Alert");
-//
-//            MyAlertDialog.setMessage("您尚未登入");
-//            DialogInterface.OnClickListener okClick = new DialogInterface.OnClickListener() {
-//
-//                public void onClick(DialogInterface dialog, int which) {
-//                    Intent intent = new Intent();
-//                    intent.setClass(NewReservationMaster.this,Login.class);
-//                    startActivity(intent);
-//                }
-//
-//            };
-//
-//            MyAlertDialog.setPositiveButton(getResources().getString(R.string.login),okClick);
-//            MyAlertDialog.setNegativeButton(getResources().getString(R.string.cancel),null);
-//            MyAlertDialog.show();
-//        }else {
-//            loginName.setText("Welcome:\n"+username);
-//        }
+        if(username.equals("nameError404"))
+        {
+            AlertDialog.Builder MyAlertDialog = new AlertDialog.Builder(this);
+
+            MyAlertDialog.setTitle("貼心提醒");
+
+            MyAlertDialog.setMessage("您尚未登入, 必需先行登入才能使用本項預約功能");
+            DialogInterface.OnClickListener okClick = new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent();
+                    intent.setClass(NewReservationMaster.this,Login.class);
+                    startActivity(intent);
+                }
+
+            };
+
+            DialogInterface.OnClickListener cancelClick = new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    NewReservationMaster.this.finish();
+                }
+            };
+
+            MyAlertDialog.setPositiveButton(getResources().getString(R.string.login),okClick);
+            MyAlertDialog.setNegativeButton(getResources().getString(R.string.cancel),cancelClick);
+            MyAlertDialog.show();
+        }else {
+            loginName.setText("Welcome:\n"+loginPre.getString("PatientName","User"));
+        }
 
     }
+    public class DrAppointmentAsyncTask extends AsyncTask<String, String, String> {
 
-    private class GetDoctorsAppointment extends Thread
-    {
-        //類別裡的成員資料;
-        //類別裡的方法;
-        NewReservationMaster mainContext;
+        Activity context;
+        ProgressDialog progressDialog;
 
-        JSONObject parameter;
+        @Override
+        protected void onPreExecute() {
+            progressDialog = Tools.wait(context);
+
+            //before works
+        }
+        @Override
+        protected String  doInBackground(String... params) {
 
 
-        String apiLocation; // "http://220.135.157.238:1113/api/AppointmentData/GetDoctorsAppointment";
-        URL url;
-        public void run()    //改寫Thread類別裡的run()方法
-        {
-            //以執行緒處理的程序;
-            HttpURLConnection connection;
+            Log.d("Location",params[0].toString());
+
             try {
+                JSONObject jsonObject = new JSONObject(params[1]);
+                URL url = new URL(params[0]); //define the url we have to connect with
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
+                urlConnection.setConnectTimeout(13000);//set timeout to 10 seconds
+                urlConnection.setReadTimeout(7000);//設置讀取超時為5秒
+                urlConnection.setRequestMethod("POST"); //設置請求的方法為POST
+                urlConnection.setInstanceFollowRedirects(true);
+                urlConnection.setRequestProperty("Content-Type","application/json");
+                urlConnection.setDoInput(true);//可從伺服器取得資料
+                urlConnection.setDoOutput(true);//可寫入資料至伺服器
+                urlConnection.setUseCaches (false);//POST方法不能緩存數據,需手動設置使用緩存的值為false
 
-                url = new URL(apiLocation); //建立 URL
-                connection = (HttpURLConnection)url.openConnection(); //開啟 Connection
+                DataOutputStream wr = new DataOutputStream (urlConnection.getOutputStream());
 
-                connection.setReadTimeout(5000); //設置讀取超時為2.5秒
-                connection.setConnectTimeout(10000); //設置連接網路超時為5秒
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setInstanceFollowRedirects(true);
-
-                connection.setDoInput(true);//可從伺服器取得資料
-                connection.setDoOutput(true);//可寫入資料至伺服器
-                connection.setRequestMethod("POST"); //設置請求的方法為POST
-                connection.setRequestProperty("Content-Type","application/json");
-//                connection.setRequestProperty("charset", "utf-8");
-                connection.setUseCaches (false);  //POST方法不能緩存數據,需手動設置使用緩存的值為false
-                //Send request
-                DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
-
-                byte[] outputBytes = parameter.toString().getBytes("UTF-8");
+                byte[] outputBytes = jsonObject.toString().getBytes("UTF-8");
                 wr.write(outputBytes);
                 wr.flush ();
                 wr.close ();
 
-
                 //Get Response
-                InputStream is = connection.getInputStream();
+                InputStream is = urlConnection.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
                 StringBuffer response = new StringBuffer();
+
                 while((line = rd.readLine()) != null) {
                     response.append(line);
                     response.append('\r');
                 }
-                JSONObject jsonObject1 = new JSONObject(response.toString());
-                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
-                Log.d("API 回應",parameter.toString()+"\n res:"+response.toString() +"\n status:"+string);
+                publishProgress(response.toString()); // 取得回應後的處理
 
 
-            } catch (Exception e) {
-                String er = e.getMessage();
-                Log.d("網路錯誤:","error"+e);
+            }catch (Exception ex){
 
+                Log.d("flag","error:"+ex.toString());
             }
+            return null;
         }
-    }
 
+
+
+        protected void onProgressUpdate(String... progress) {
+
+
+            Log.d("r",progress[0]);
+            progressDialog.cancel();
+            JSONObject jsonObject;
+            JSONObject header;
+            JSONObject data;
+            try {
+                //display response data
+                jsonObject = new JSONObject(progress[0]);
+                header = jsonObject.getJSONObject("Header");
+
+
+
+                Log.d("Fin:",header.getString("StatusCode"));
+
+                if (header.getString("StatusCode").equals("0000")) {
+                    Log.d("r",progress[0]);
+                }else{
+                    Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
+                }
+
+
+            } catch (Exception ex) {
+                Log.d("error",ex.getLocalizedMessage());
+            }
+
+        }
+
+        protected void onPostExecute(String  result2){
+
+
+        }
+
+    }
 
 }

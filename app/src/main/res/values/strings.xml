@@ -10,7 +10,7 @@
     <string name="myReservation">My Reservation(s)</string>
     <string name="doctorSelectTitle">Select Doctor:</string>
     <string name="login">Login</string>
-    <string name="loginAccountTitle">Enter Your ID:</string>
+    <string name="loginAccountTitle">National ID:</string>
     <string name="submit">Submit</string>
     <string name="passwordTitle">Password:</string>
     <string name="passwordRequest">must 8 to 12 charecters</string>
@@ -21,7 +21,7 @@
     <string name="passwordError002Character">must including 1. capital letters or lowercase (A~Z)(a~z) 2. numbers (0~9)</string>
     <string name="loginSuceesfully">Login Sucees</string>
     <string name="nameTitle">Name:</string>
-    <string name="rePassword">Confirm password</string>
+    <string name="rePassword">Confirm PW:</string>
     <string name="telephoneNum">PhoneNum</string>
     <string name="emailTitle">E-mail</string>
     <string name="gender">Gender</string>
@@ -43,5 +43,9 @@
     <string name="passwordChange">Password Change</string>
     <string name="modifyYouData">Modify Your Data</string>
     <string name="wait">Waitting.....</string>
+    <string name="networNotWork">Please check your network</string>
+    <string name="newPassword">New Password</string>
+    <string name="oldPassword">Old Password</string>
+    <string name="passwordChanged">Password Changed</string>
 
 </resources>

@@ -59,6 +59,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void submit(View v) {
+        if(!Tools.checkNetworkConnected(this)){return;};
 
         String pass = password.getText().toString();
         String acc = account.getText().toString().toUpperCase();
@@ -158,7 +159,8 @@ public class Login extends AppCompatActivity {
 
     private void checkPasswordInput(String account,String password){
 
-//        password = bin2hex(password);
+        password = Tools.bin2hex(password);
+        Log.d("HEX",password);
 
         String url = getString(R.string.api)+"/api/PatientData/LoginPatient";
 
@@ -319,19 +321,4 @@ public class Login extends AppCompatActivity {
 
     }
 
-    private static byte [] getHash(String password) {
-        MessageDigest digest = null ;
-        try {
-            digest = MessageDigest. getInstance( "SHA-256");
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-        }
-        digest.reset();
-        return digest.digest(password.getBytes());
-    }
-
-    public static String bin2hex(String strForEncrypt) {
-        byte [] data = getHash(strForEncrypt);
-        return String.format( "%0" + (data.length * 2) + "X", new BigInteger(1, data));
-    }
 }
