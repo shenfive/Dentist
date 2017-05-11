@@ -171,6 +171,18 @@ public class Tools {
         return progressDialog;
     }
 
+    static String int2StringDay(int year,int month,int day){
+        String yrarS = year+"";
+
+        String monthS = month+"";
+        if(monthS.length() == 1 ){ monthS = "0"+ monthS; };
+
+        String dayS = day+"";
+        if(dayS.length() == 1){dayS = "0"+dayS; };
+
+        return yrarS+"-"+monthS+"-"+dayS;
+    }
+
 
 
 

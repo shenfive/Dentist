@@ -1,5 +1,5 @@
 <resources>
-    <string name="api">http://220.135.157.238:1113</string>
+
     <string name="app_name">Dentist</string>
     <string name="title">Dentist</string>
     <string name="tab1">Intro</string>

@@ -71,6 +71,7 @@ public class ModifyData extends AppCompatActivity {
         nameET.setText(loginPre.getString("PatientName",""));
         phoneET.setText(loginPre.getString("PatientMobile",""));
         emailET.setText(loginPre.getString("PatientEmail",""));
+        Log.d("org",loginPre.getString("Gender",""));
         if(loginPre.getString("Gender","").equals("M")){
             male.setChecked(true);
         }else {
@@ -90,7 +91,7 @@ public class ModifyData extends AppCompatActivity {
         maBirthdayDatePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
         String birthdatS = loginPre.getString("Birthday","20151231");
         int bYear = Integer.parseInt(birthdatS.substring(0,4));
-        int bMonth = Integer.parseInt(birthdatS.substring(4,7))-1; // 月份計算為 0~11
+        int bMonth = Integer.parseInt(birthdatS.substring(5,7))-1; // 月份計算為 0~11
         int bDay = Integer.parseInt(birthdatS.substring(6,8));
         maBirthdayDatePicker.updateDate(bYear,bMonth,bDay);
 
@@ -126,8 +127,7 @@ public class ModifyData extends AppCompatActivity {
             return;
         }
 
-
-        if (male.isActivated() == true ){
+        if (male.isChecked() == true ){
             genderS = "M";
         }else{
             genderS ="F";
@@ -262,14 +262,23 @@ public class ModifyData extends AppCompatActivity {
                 if (header.getString("StatusCode").equals("0000")) {
                     data = new JSONObject(progress[1]).getJSONObject("Data");
 
+                    Log.d("Good",data.toString());
+
                     SharedPreferences.Editor editor = loginPre.edit();
 
-                    editor.putString("PatientName", data.getString("PatientName"))
+
+                    editor.remove("PatitentName")
+                            .putString("PatientName", data.getString("PatientName"))
+                            .remove("PatientMobile")
                             .putString("PatientMobile", data.getString("PatientMobile"))
+                            .remove("PatientEmail")
                             .putString("PatientEmail", data.getString("PatientEmail"))
+                            .remove("Gender")
                             .putString("Gender", data.getString("Gender"))
+                            .remove("Birthday")
                             .putString("Birthday", data.getString("Birthday"))
                             .commit();
+
 
                     context.finish();
                 }else{

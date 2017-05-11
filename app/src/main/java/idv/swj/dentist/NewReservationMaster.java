@@ -6,16 +6,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CalendarView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,16 +29,21 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class NewReservationMaster extends AppCompatActivity {
     Spinner doctorListSpinner;
     String[] doctorList;
     SharedPreferences loginPre;
-    TextView loginName;
+    CalendarView calendarView;
+    TextView loginName,dayStatus;
     DrAppointmentAsyncTask drAppointmentAsyncTask;
-    JSONObject[] allDrList;
-    JSONObject[] doctorAppointment;
+    JSONArray data;
+    JSONArray allDrList;
+    JSONObject dataIndex;
+    JSONObject drIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +54,47 @@ public class NewReservationMaster extends AppCompatActivity {
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
+        calendarView = (CalendarView)findViewById(R.id.calendarView);
         loginName = (TextView)findViewById(R.id.loginName);
         loginPre = getSharedPreferences("loginStatus",0);
+        dayStatus = (TextView)findViewById(R.id.dayStatus);
+        dataIndex = new JSONObject();
+        drIndex = new JSONObject();
 
 
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                Log.d("dta",""+year+"/"+month+"/"+dayOfMonth);
+
+                try {
+                    JSONObject dayJSON = data.getJSONObject(dataIndex.getInt(Tools.int2StringDay(year,month+1,dayOfMonth)));
+                    Log.d("select",dayJSON.toString());
+                    String status = dayJSON.getString("Status");
+                    switch (status){
+                        case "E":
+                            dayStatus.setText("己經過去了, 預約不成的");
+                            break;
+                        case "O":
+                            String dayDrList = "";
+                            JSONArray drList = dayJSON.getJSONArray("DrIds");
+                            dayStatus.setText(drList.toString());
+                            break;
+                        case "C":
+                            dayStatus.setText("一粒一休, 這一天休息");
+                            break;
+
+                    }
+
+
+                }catch (Exception e){
+                    Log.d("SelectDay",e.getLocalizedMessage());
+                    dayStatus.setText("程式沒寫完, 還不要查下一個月的");
+                }
+
+
+            }
+        });
 
         // 接下來要打 API 了
         JSONObject parameter = new JSONObject();
@@ -57,20 +102,14 @@ public class NewReservationMaster extends AppCompatActivity {
         JSONObject data = new JSONObject();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMM");
 
-
-
-
         String url = getString(R.string.api) + "/api/AppointmentData/GetDoctorsAppointment";
         try {
             header.put("Version","1.0");
             header.put("CompanyId","4881017701");
             header.put("ActionMode","GetDoctorsAppointment");
-
             data.put("StartMonth",simpleDateFormat.format(new Date()));
-
             parameter.put("Header",header);
             parameter.put("Data",data);
-
             drAppointmentAsyncTask = new DrAppointmentAsyncTask();
             drAppointmentAsyncTask.context = this;
             drAppointmentAsyncTask.execute(url,parameter.toString());
@@ -82,7 +121,45 @@ public class NewReservationMaster extends AppCompatActivity {
 
     }
 
-    public void setDoctorList(){
+    private void setCalendarView(){
+        Date today = new Date();
+        SimpleDateFormat simpleDateFormatYMD = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat simpleDateFormatYM = new SimpleDateFormat("yyyyMM");
+        Date startOfMonth = new Date();
+        try {
+             startOfMonth = simpleDateFormatYMD.parse(simpleDateFormatYM.format(today) + "01");
+        }catch (Exception e){}
+        calendarView.setFirstDayOfWeek(0);
+        calendarView.setMinDate(startOfMonth.getTime());
+        calendarView.setMaxDate(startOfMonth.getTime()+5270400000l);
+
+
+        for(int i=0;i<data.length();i++){
+            String status = "";
+            try {
+                JSONObject theDay = data.getJSONObject(i);
+                status = theDay.getString("Status");
+
+                //TODO 改變日期顏色
+                switch (status){
+                    case "E":
+
+                        break;
+
+
+                }
+            }catch (Exception e){Log.d("setCal",e.getLocalizedMessage());return;}
+
+
+
+
+
+
+        }
+
+    }
+
+    private void setDoctorList(){
 
         // 設定醫生選單
 
@@ -92,20 +169,31 @@ public class NewReservationMaster extends AppCompatActivity {
         doctorListSpinner.setAdapter(doctorListAdapter);
     }
 
+    private String[] getDoctor(){
+        //取得醫師清單
+        ArrayList<String> list = new ArrayList<String>();
+
+        list.add(".......");
+
+        for(int i=0;i<allDrList.length();i++){
+            try {
+                list.add(allDrList.getJSONObject(i).getString("ChineseName")+" "+
+                        allDrList.getJSONObject(i).getString("EnglishName"));
+            }catch (JSONException e){
+                Log.d("get Doctor List:",e.getLocalizedMessage());
+            }
+
+        }
+        String[] theList = list.toArray(new String[list.size()]);
+        return theList;
+    }
+
     @Override
     public void onResume(){
         super.onResume();
         checkLoingStatus();
         Log.d("the"," Resume");
     }
-
-
-    private String[] getDoctor(){
-        //取得醫師清單
-        String[] List = {"不指定醫師","張三丰","李四端","王五刀"};
-        return List;
-    }
-
 
     private void checkLoingStatus(){
 
@@ -210,11 +298,11 @@ public class NewReservationMaster extends AppCompatActivity {
         protected void onProgressUpdate(String... progress) {
 
 
-            Log.d("r",progress[0]);
             progressDialog.cancel();
             JSONObject jsonObject;
             JSONObject header;
-            JSONObject data;
+
+
             try {
                 //display response data
                 jsonObject = new JSONObject(progress[0]);
@@ -225,7 +313,27 @@ public class NewReservationMaster extends AppCompatActivity {
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
-                    Log.d("r",progress[0]);
+
+
+
+                    allDrList = jsonObject.getJSONArray("AllDoctorList");
+                    setDoctorList();
+                    for(int i = 0;i<allDrList.length();i++){
+                        Log.d("all",i+allDrList.getJSONObject(i).toString());
+                        drIndex.put(allDrList.getJSONObject(i).getString("DrId"),i);
+                    }
+
+
+
+                    data = jsonObject.getJSONArray("Data");
+                    setCalendarView();
+                    for(int i = 0;i<data.length();i++){
+                        JSONObject object = data.getJSONObject(i);
+                        dataIndex.put(object.getString("Date"),i);
+                        data.put(i,object);
+                        Log.d("all",data.getJSONObject(i).toString());
+                    }
+
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
                 }
