@@ -119,8 +119,8 @@
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_weight="1"
-            android:textAlignment="textEnd"
-            android:text="@string/appver" />
+            android:text="@string/appver"
+            android:textAlignment="textEnd" />
 
         <ImageView
             android:id="@+id/imageView"

@@ -177,15 +177,8 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-        String year = datePicker.getYear()+"";
 
-        String month = (datePicker.getMonth()+1)+"";
-        if(month.length()==1){ month = "0"+month;}
-
-        String day = datePicker.getDayOfMonth()+"";
-        if(day.length()==1){ day = "0"+day;}
-
-        birthdayS = year+month+day;
+        birthdayS = Tools.int2StringDay(datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
 
         password1S = Tools.bin2hex(password1S);
 

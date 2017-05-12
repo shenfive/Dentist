@@ -133,15 +133,10 @@ public class ModifyData extends AppCompatActivity {
             genderS ="F";
         }
 
-        String year = maBirthdayDatePicker.getYear()+"";
 
-        String month = (maBirthdayDatePicker.getMonth()+1)+"";
-        if(month.length()==1){ month = "0"+month;}
-
-        String day = maBirthdayDatePicker.getDayOfMonth()+"";
-        if(day.length()==1){ day = "0"+day;}
-
-        birthdayS = year+month+day;
+        birthdayS = Tools.int2StringDay(maBirthdayDatePicker.getYear()
+                ,maBirthdayDatePicker.getMonth()+1
+                ,maBirthdayDatePicker.getDayOfMonth());
 
         Log.d("bd",birthdayS);
 
