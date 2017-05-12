@@ -48,4 +48,5 @@
     <string name="newPassword">新密码</string>
     <string name="oldPassword">旧密码</string>
     <string name="passwordChanged">己变更密码</string>
+    <string name="allDrctor">所有医生</string>
 </resources>

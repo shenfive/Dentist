@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
-import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,10 +74,9 @@ public class NewReservationMaster extends AppCompatActivity {
         //Calender 初始化
 
         compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
-        compactCalendarView.drawSmallIndicatorForEvents(true);
-        compactCalendarView.setLocale(Locale.CHINESE);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
-        compactCalendarView.setShouldShowMondayAsFirstDay(false);
+        compactCalendarView.setFirstDayOfWeek(1);
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
         calenderTitle.setText(simpleDateFormat1.format(new Date()));
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
@@ -90,8 +89,12 @@ public class NewReservationMaster extends AppCompatActivity {
 
             @Override
             public void onMonthScroll(Date date) {
+                dataIndex = new JSONObject();
+                drIndex = new JSONObject();
+                compactCalendarView.removeAllEvents();
                 SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
                 calenderTitle.setText(simpleDateFormat1.format(date));
+                updateData(date);
             }
         });
 
@@ -159,7 +162,7 @@ public class NewReservationMaster extends AppCompatActivity {
         //取得醫師清單
         ArrayList<String> list = new ArrayList<String>();
 
-        list.add(".......");
+        list.add(getString(R.string.allDrctor));
 
         for(int i=0;i<allDrList.length();i++){
             try {
@@ -313,7 +316,7 @@ public class NewReservationMaster extends AppCompatActivity {
 
                     data = jsonObject.getJSONArray("Data");
 //                    setCalendarView();
-                    List<CalendarDayEvent> events = new ArrayList<CalendarDayEvent>();
+                    List<Event> events = new ArrayList<Event>();
                     for(int i = 0;i<data.length();i++){
                         JSONObject object = data.getJSONObject(i);
                         dataIndex.put(object.getString("Date"),i);
@@ -323,16 +326,16 @@ public class NewReservationMaster extends AppCompatActivity {
                         JSONObject day = data.getJSONObject(i);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         Date date = simpleDateFormat.parse(day.getString("Date"));
-                        CalendarDayEvent event = null;
+                        Event event = null;
                         switch (day.getString("Status")) {
                             case "E":
-                                event = new CalendarDayEvent(date.getTime(), Color.GRAY);
+                                event = new Event(Color.GRAY,date.getTime() );
                                 break;
                             case "O":
-                                event = new CalendarDayEvent(date.getTime(), Color.BLUE);
+                                event = new Event(Color.BLUE,date.getTime());
                                 break;
                             case "C":
-                                event = new CalendarDayEvent(date.getTime(), Color.RED);
+                                event = new Event(Color.RED,date.getTime());
                                 break;
                         }
 
