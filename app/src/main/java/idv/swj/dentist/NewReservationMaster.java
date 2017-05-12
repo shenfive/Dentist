@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 public class NewReservationMaster extends AppCompatActivity {
@@ -74,6 +77,7 @@ public class NewReservationMaster extends AppCompatActivity {
         compactCalendarView.drawSmallIndicatorForEvents(true);
         compactCalendarView.setLocale(Locale.CHINESE);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
+        compactCalendarView.setShouldShowMondayAsFirstDay(false);
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
         calenderTitle.setText(simpleDateFormat1.format(new Date()));
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
@@ -91,40 +95,11 @@ public class NewReservationMaster extends AppCompatActivity {
             }
         });
 
-//        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-//            @Override
-//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-//                Log.d("dta",""+year+"/"+month+"/"+dayOfMonth);
-//
-//                try {
-//                    JSONObject dayJSON = data.getJSONObject(dataIndex.getInt(Tools.int2StringDay(year,month+1,dayOfMonth)));
-//                    Log.d("select",dayJSON.toString());
-//                    String status = dayJSON.getString("Status");
-//                    switch (status){
-//                        case "E":
-//                            dayStatus.setText("己經過去了, 預約不成的");
-//                            break;
-//                        case "O":
-//                            String dayDrList = "";
-//                            JSONArray drList = dayJSON.getJSONArray("DrIds");
-//                            dayStatus.setText(drList.toString());
-//                            break;
-//                        case "C":
-//                            dayStatus.setText("一粒一休, 這一天休息");
-//                            break;
-//
-//                    }
-//
-//
-//                }catch (Exception e){
-//                    Log.d("SelectDay",e.getLocalizedMessage());
-//                    dayStatus.setText("程式沒寫完, 還不要查下一個月的");
-//                }
-//
-//
-//            }
-//        });
+        updateData(new Date());
+    }
 
+
+    public void updateData(Date date){
         // 接下來要打 API 了
         JSONObject parameter = new JSONObject();
         JSONObject header = new JSONObject();
@@ -136,7 +111,7 @@ public class NewReservationMaster extends AppCompatActivity {
             header.put("Version","1.0");
             header.put("CompanyId","4881017701");
             header.put("ActionMode","GetDoctorsAppointment");
-            data.put("StartMonth",simpleDateFormat.format(new Date()));
+            data.put("StartMonth",simpleDateFormat.format(date));
             parameter.put("Header",header);
             parameter.put("Data",data);
             drAppointmentAsyncTask = new DrAppointmentAsyncTask();
@@ -149,6 +124,9 @@ public class NewReservationMaster extends AppCompatActivity {
 
 
     }
+
+
+
 
     public void onClickPreviousMonth(View v){
         compactCalendarView.showPreviousMonth();
@@ -164,27 +142,6 @@ public class NewReservationMaster extends AppCompatActivity {
         SimpleDateFormat simpleDateFormatYMD = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat simpleDateFormatYM = new SimpleDateFormat("yyyyMM");
         Date startOfMonth = new Date();
-//        try {
-//             startOfMonth = simpleDateFormatYMD.parse(simpleDateFormatYM.format(today) + "01");
-//        }catch (Exception e){}
-//        calendarView.setFirstDayOfWeek(0);
-//        calendarView.setMinDate(startOfMonth.getTime());
-//        calendarView.setMaxDate(startOfMonth.getTime()+5270400000l);
-//
-//
-//        for(int i=0;i<data.length();i++){
-//            String status = "";
-//            try {
-//                JSONObject theDay = data.getJSONObject(i);
-//                status = theDay.getString("Status");
-//
-//                //
-//                switch (status){
-//                    case "E":
-//                        break;
-//                }
-//            }catch (Exception e){Log.d("setCal",e.getLocalizedMessage());return;}
-//        }
 
     }
 
@@ -355,13 +312,34 @@ public class NewReservationMaster extends AppCompatActivity {
 
 
                     data = jsonObject.getJSONArray("Data");
-                    setCalendarView();
+//                    setCalendarView();
+                    List<CalendarDayEvent> events = new ArrayList<CalendarDayEvent>();
                     for(int i = 0;i<data.length();i++){
                         JSONObject object = data.getJSONObject(i);
                         dataIndex.put(object.getString("Date"),i);
                         data.put(i,object);
                         Log.d("all",data.getJSONObject(i).toString());
+                        // 加入行事曆
+                        JSONObject day = data.getJSONObject(i);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = simpleDateFormat.parse(day.getString("Date"));
+                        CalendarDayEvent event = null;
+                        switch (day.getString("Status")) {
+                            case "E":
+                                event = new CalendarDayEvent(date.getTime(), Color.GRAY);
+                                break;
+                            case "O":
+                                event = new CalendarDayEvent(date.getTime(), Color.BLUE);
+                                break;
+                            case "C":
+                                event = new CalendarDayEvent(date.getTime(), Color.RED);
+                                break;
+                        }
+
+                        events.add(event);
+
                     }
+                    compactCalendarView.addEvents(events);
 
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
