@@ -18,6 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,14 +34,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class NewReservationMaster extends AppCompatActivity {
     Spinner doctorListSpinner;
     String[] doctorList;
     SharedPreferences loginPre;
-    CalendarView calendarView;
-    TextView loginName,dayStatus;
+    TextView loginName,dayStatus,calenderTitle;
     DrAppointmentAsyncTask drAppointmentAsyncTask;
+    CompactCalendarView compactCalendarView;
     JSONArray data;
     JSONArray allDrList;
     JSONObject dataIndex;
@@ -53,48 +56,74 @@ public class NewReservationMaster extends AppCompatActivity {
         getSupportActionBar().hide(); //隱藏標題
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
-        doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
-        calendarView = (CalendarView)findViewById(R.id.calendarView);
-        loginName = (TextView)findViewById(R.id.loginName);
         loginPre = getSharedPreferences("loginStatus",0);
+
+        doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
+        loginName = (TextView)findViewById(R.id.loginName);
+        calenderTitle = (TextView)findViewById(R.id.monthTitle);
         dayStatus = (TextView)findViewById(R.id.dayStatus);
+        compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
+
         dataIndex = new JSONObject();
         drIndex = new JSONObject();
 
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        //Calender 初始化
+
+        compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
+        compactCalendarView.drawSmallIndicatorForEvents(true);
+        compactCalendarView.setLocale(Locale.CHINESE);
+        compactCalendarView.setUseThreeLetterAbbreviation(true);
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
+        calenderTitle.setText(simpleDateFormat1.format(new Date()));
+        compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                Log.d("dta",""+year+"/"+month+"/"+dayOfMonth);
+            public void onDayClick(Date date) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+                Log.d("Date",simpleDateFormat.format(date));
+                Log.d("DateOM",simpleDateFormat.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+            }
 
-                try {
-                    JSONObject dayJSON = data.getJSONObject(dataIndex.getInt(Tools.int2StringDay(year,month+1,dayOfMonth)));
-                    Log.d("select",dayJSON.toString());
-                    String status = dayJSON.getString("Status");
-                    switch (status){
-                        case "E":
-                            dayStatus.setText("己經過去了, 預約不成的");
-                            break;
-                        case "O":
-                            String dayDrList = "";
-                            JSONArray drList = dayJSON.getJSONArray("DrIds");
-                            dayStatus.setText(drList.toString());
-                            break;
-                        case "C":
-                            dayStatus.setText("一粒一休, 這一天休息");
-                            break;
-
-                    }
-
-
-                }catch (Exception e){
-                    Log.d("SelectDay",e.getLocalizedMessage());
-                    dayStatus.setText("程式沒寫完, 還不要查下一個月的");
-                }
-
-
+            @Override
+            public void onMonthScroll(Date date) {
+                SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
+                calenderTitle.setText(simpleDateFormat1.format(date));
             }
         });
+
+//        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+//            @Override
+//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+//                Log.d("dta",""+year+"/"+month+"/"+dayOfMonth);
+//
+//                try {
+//                    JSONObject dayJSON = data.getJSONObject(dataIndex.getInt(Tools.int2StringDay(year,month+1,dayOfMonth)));
+//                    Log.d("select",dayJSON.toString());
+//                    String status = dayJSON.getString("Status");
+//                    switch (status){
+//                        case "E":
+//                            dayStatus.setText("己經過去了, 預約不成的");
+//                            break;
+//                        case "O":
+//                            String dayDrList = "";
+//                            JSONArray drList = dayJSON.getJSONArray("DrIds");
+//                            dayStatus.setText(drList.toString());
+//                            break;
+//                        case "C":
+//                            dayStatus.setText("一粒一休, 這一天休息");
+//                            break;
+//
+//                    }
+//
+//
+//                }catch (Exception e){
+//                    Log.d("SelectDay",e.getLocalizedMessage());
+//                    dayStatus.setText("程式沒寫完, 還不要查下一個月的");
+//                }
+//
+//
+//            }
+//        });
 
         // 接下來要打 API 了
         JSONObject parameter = new JSONObject();
@@ -121,41 +150,41 @@ public class NewReservationMaster extends AppCompatActivity {
 
     }
 
+    public void onClickPreviousMonth(View v){
+        compactCalendarView.showPreviousMonth();
+    }
+
+    public void onClickNextMonth(View v){
+        compactCalendarView.showNextMonth();
+
+    }
+
     private void setCalendarView(){
         Date today = new Date();
         SimpleDateFormat simpleDateFormatYMD = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat simpleDateFormatYM = new SimpleDateFormat("yyyyMM");
         Date startOfMonth = new Date();
-        try {
-             startOfMonth = simpleDateFormatYMD.parse(simpleDateFormatYM.format(today) + "01");
-        }catch (Exception e){}
-        calendarView.setFirstDayOfWeek(0);
-        calendarView.setMinDate(startOfMonth.getTime());
-        calendarView.setMaxDate(startOfMonth.getTime()+5270400000l);
-
-
-        for(int i=0;i<data.length();i++){
-            String status = "";
-            try {
-                JSONObject theDay = data.getJSONObject(i);
-                status = theDay.getString("Status");
-
-                //TODO 改變日期顏色
-                switch (status){
-                    case "E":
-
-                        break;
-
-
-                }
-            }catch (Exception e){Log.d("setCal",e.getLocalizedMessage());return;}
-
-
-
-
-
-
-        }
+//        try {
+//             startOfMonth = simpleDateFormatYMD.parse(simpleDateFormatYM.format(today) + "01");
+//        }catch (Exception e){}
+//        calendarView.setFirstDayOfWeek(0);
+//        calendarView.setMinDate(startOfMonth.getTime());
+//        calendarView.setMaxDate(startOfMonth.getTime()+5270400000l);
+//
+//
+//        for(int i=0;i<data.length();i++){
+//            String status = "";
+//            try {
+//                JSONObject theDay = data.getJSONObject(i);
+//                status = theDay.getString("Status");
+//
+//                //
+//                switch (status){
+//                    case "E":
+//                        break;
+//                }
+//            }catch (Exception e){Log.d("setCal",e.getLocalizedMessage());return;}
+//        }
 
     }
 
