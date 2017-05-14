@@ -7,14 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CalendarView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,15 +34,14 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
+
 
 public class NewReservationMaster extends AppCompatActivity {
     Spinner doctorListSpinner;
     String[] doctorList;
     SharedPreferences loginPre;
-    TextView loginName,dayStatus,calenderTitle;
+    TextView loginName,calenderTitle;
     DrAppointmentAsyncTask drAppointmentAsyncTask;
     CompactCalendarView compactCalendarView;
     JSONArray data;
@@ -64,15 +62,107 @@ public class NewReservationMaster extends AppCompatActivity {
         doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
         loginName = (TextView)findViewById(R.id.loginName);
         calenderTitle = (TextView)findViewById(R.id.monthTitle);
-        dayStatus = (TextView)findViewById(R.id.dayStatus);
         compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
 
         dataIndex = new JSONObject();
         drIndex = new JSONObject();
 
+        //加入選擇醫生事件
+        doctorListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                compactCalendarView.removeAllEvents();
+                if (position == 0){
+                    try{
+                        List<Event> events = new ArrayList<Event>();
+                        for(int i = 0;i<data.length();i++){
+                            JSONObject object = data.getJSONObject(i);
+                            dataIndex.put(object.getString("Date"),i);
+                            data.put(i,object);
+                            Log.d("all",data.getJSONObject(i).toString());
+                            // 加入行事曆
+                            JSONObject day = data.getJSONObject(i);
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = simpleDateFormat.parse(day.getString("Date"));
+                            Event event = null;
+                            switch (day.getString("Status")) {
+                                case "E":
+                                    event = new Event(Color.GRAY,date.getTime() );
+                                    break;
+                                case "O":
+                                    event = new Event(Color.GREEN,date.getTime());
+                                    break;
+                                case "C":
+                                    event = new Event(Color.RED,date.getTime());
+                                    break;
+                            }
+                            events.add(event);
+                        }
+                        compactCalendarView.addEvents(events);
+                    }catch (Exception e){
+
+                    }
+                }else {
+                    String selectedDoctorID;
+                    try {
+                        selectedDoctorID =  drIndex.getString("" + (position-1));
+                        Log.d("sDoctor",selectedDoctorID);
+
+
+                        List<Event> events = new ArrayList<Event>();
+                        for(int i = 0;i<data.length();i++){
+                            JSONObject object = data.getJSONObject(i);
+                            dataIndex.put(object.getString("Date"),i);
+                            data.put(i,object);
+                            // 加入行事曆
+                            JSONObject day = data.getJSONObject(i);
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = simpleDateFormat.parse(day.getString("Date"));
+                            Event event = null;
+                            switch (day.getString("Status")) {
+                                case "E":
+                                    event = new Event(Color.GRAY,date.getTime() );
+                                    break;
+                                case "O":
+                                    JSONArray drIds =object.getJSONArray("DrIds");
+                                    boolean drWordFlag = false;
+                                    for(int j=0;j<drIds.length();j++){
+                                        if (selectedDoctorID.equals(drIds.getString(j))){
+                                            drWordFlag = true;
+                                        }
+                                    }
+                                    if(drWordFlag){
+                                        event = new Event(Color.GREEN,date.getTime());
+                                    }else {
+                                        event = new Event(Color.RED,date.getTime());
+                                    }
+
+
+                                    break;
+                                case "C":
+                                    event = new Event(Color.RED,date.getTime());
+                                    break;
+                            }
+                            events.add(event);
+                        }
+                        compactCalendarView.addEvents(events);
+
+
+
+
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         //Calender 初始化
-
         compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
         compactCalendarView.setFirstDayOfWeek(1);
@@ -80,17 +170,92 @@ public class NewReservationMaster extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
         calenderTitle.setText(simpleDateFormat1.format(new Date()));
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+
+
             @Override
             public void onDayClick(Date date) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-                Log.d("Date",simpleDateFormat.format(date));
-                Log.d("DateOM",simpleDateFormat.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+                //選擇日期
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String selectedDrID = "notSelect";
+                Log.d("Date1",simpleDateFormat.format(date));
+                if(doctorListSpinner.getSelectedItemPosition() != 0 ) {
+                    try {
+                        selectedDrID = drIndex.getString((doctorListSpinner.getSelectedItemPosition() - 1) + "");
+                    } catch (Exception e) {
+                        Log.d("select Dr ID error",e.getLocalizedMessage());
+                    }
+                }
+
+
+
+                //取得當日資料
+
+                try{
+                    Log.d("Status",dataIndex.getInt(simpleDateFormat.format(date))+"");
+                    int index = dataIndex.getInt(simpleDateFormat.format(date));
+                    Log.d("theData",data.toString());
+
+                    JSONObject dayObject = data.getJSONObject(index);
+                    Log.d("Status",dayObject.getString("Status"));
+
+                    switch (dayObject.getString("Status")) {
+                        case "E":
+                            Toast.makeText(NewReservationMaster.this, "Stauuts is E", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "C":
+                            Toast.makeText(NewReservationMaster.this, "Stauuts is C", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "O":
+                            if (selectedDrID.equals("notSelect")) {
+                                Intent intent = new Intent(NewReservationMaster.this, NewReservationDetial.class);
+                                intent.putExtra("data", data.toString());
+                                intent.putExtra("allDrList",allDrList.toString());
+                                intent.putExtra("drIndex",drIndex.toString());
+                                intent.putExtra("dataIndex",dataIndex.toString());
+                                startActivity(intent);
+
+                            }else{
+                                JSONArray drIds = dayObject.getJSONArray("DrIds");
+                                boolean drWordFlag = false;
+                                for (int j = 0; j < drIds.length(); j++) {
+                                    if (selectedDrID.equals(drIds.getString(j))) {
+                                    drWordFlag = true;
+                                    }
+                                }
+                                if (drWordFlag) {
+                                    Intent intent = new Intent(NewReservationMaster.this, NewReservationDetial.class);
+                                    intent.putExtra("data", data.toString());
+                                    intent.putExtra("allDrList",allDrList.toString());
+                                    intent.putExtra("drIndex",drIndex.toString());
+                                    intent.putExtra("dataIndex",dataIndex.toString());
+                                    startActivity(intent);
+                                }else {
+                                    Toast.makeText(NewReservationMaster.this,
+                                            "Stauuts is not Doctor Working Day", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            break;
+
+                    }
+
+                }catch (Exception e){
+
+                    Log.d("get day data",e.getLocalizedMessage());
+                }
+
+
+
+
+
+
             }
 
             @Override
             public void onMonthScroll(Date date) {
                 dataIndex = new JSONObject();
                 drIndex = new JSONObject();
+                doctorListSpinner.setAdapter(null);
                 compactCalendarView.removeAllEvents();
                 SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy MMMM");
                 calenderTitle.setText(simpleDateFormat1.format(date));
@@ -309,19 +474,20 @@ public class NewReservationMaster extends AppCompatActivity {
                     setDoctorList();
                     for(int i = 0;i<allDrList.length();i++){
                         Log.d("all",i+allDrList.getJSONObject(i).toString());
-                        drIndex.put(allDrList.getJSONObject(i).getString("DrId"),i);
+                        drIndex.put(i+"",allDrList.getJSONObject(i).getString("DrId"));
                     }
 
 
 
+
                     data = jsonObject.getJSONArray("Data");
-//                    setCalendarView();
+//                    加入日期事件
                     List<Event> events = new ArrayList<Event>();
                     for(int i = 0;i<data.length();i++){
                         JSONObject object = data.getJSONObject(i);
                         dataIndex.put(object.getString("Date"),i);
-                        data.put(i,object);
-                        Log.d("all",data.getJSONObject(i).toString());
+//                        data.put(i,object);
+
                         // 加入行事曆
                         JSONObject day = data.getJSONObject(i);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -332,7 +498,7 @@ public class NewReservationMaster extends AppCompatActivity {
                                 event = new Event(Color.GRAY,date.getTime() );
                                 break;
                             case "O":
-                                event = new Event(Color.BLUE,date.getTime());
+                                event = new Event(Color.GREEN,date.getTime());
                                 break;
                             case "C":
                                 event = new Event(Color.RED,date.getTime());
@@ -342,6 +508,8 @@ public class NewReservationMaster extends AppCompatActivity {
                         events.add(event);
 
                     }
+                    Log.d("dataIndex",dataIndex.toString());
+                    Log.d("data",data.toString());
                     compactCalendarView.addEvents(events);
 
                 }else{

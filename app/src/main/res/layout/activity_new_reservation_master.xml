@@ -48,8 +48,8 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="6dp"
         android:text="@string/doctorSelectTitle"
         android:textAlignment="center"
         android:gravity="center"
@@ -90,12 +90,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp">
 
-        <TextView
-            android:id="@+id/dayStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
     </LinearLayout>
 
     <android.support.constraint.ConstraintLayout
