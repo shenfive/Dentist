@@ -196,8 +196,8 @@ public class CreateAccount extends AppCompatActivity {
         JSONObject data = new JSONObject();
 
         try {
-            header.put("Version", "1.0");
-            header.put("CompanyId", "4881017701");
+            header.put("Version", Tools.apiVersion());
+            header.put("CompanyId", Tools.companyId());
             header.put("ActionMode", "AddPatient");
 
             data.put("Account", acccountS);

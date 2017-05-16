@@ -21,6 +21,16 @@ import java.util.regex.Pattern;
 
 public class Tools {
 
+
+    static public String companyId(){
+        return "4881017701";
+    }
+
+    static public String apiVersion(){
+        return "1.0";
+    }
+
+
     static public boolean checkNetworkConnected(Context context) {
         boolean result = false;
         ConnectivityManager CM = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);

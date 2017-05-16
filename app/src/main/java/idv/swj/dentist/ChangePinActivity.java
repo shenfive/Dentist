@@ -65,8 +65,8 @@ public class ChangePinActivity extends AppCompatActivity {
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
         try {
-            header.put("Version", "1.0")
-                    .put("CompanyId", "4881017701")
+            header.put("Version", Tools.apiVersion())
+                    .put("CompanyId", Tools.companyId())
                     .put("ActionMode", "ChangePatientPin");
             data.put("Account", account.getText().toString())
                     .put("OldPatientPin",Tools.bin2hex(oldPasswordS))

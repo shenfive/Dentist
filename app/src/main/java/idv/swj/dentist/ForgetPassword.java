@@ -59,8 +59,8 @@ public class ForgetPassword extends AppCompatActivity {
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
         try {
-            header.put("Version", "1.0");
-            header.put("CompanyId", "4881017701");
+            header.put("Version", Tools.apiVersion());
+            header.put("CompanyId", Tools.companyId());
             header.put("ActionMode", "ForgetPatientPin");
             data.put("Account", inputAccout.toUpperCase());
             data.put("Email",inputEmail);

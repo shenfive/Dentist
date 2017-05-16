@@ -48,5 +48,6 @@
     <string name="oldPassword">Old Password</string>
     <string name="passwordChanged">Password Changed</string>
     <string name="allDrctor">All Doctors</string>
+    <string name="treatment">Treatment</string>
 
 </resources>

@@ -212,6 +212,8 @@ public class NewReservationMaster extends AppCompatActivity {
                                 intent.putExtra("allDrList",allDrList.toString());
                                 intent.putExtra("drIndex",drIndex.toString());
                                 intent.putExtra("dataIndex",dataIndex.toString());
+                                intent.putExtra("selectedDay",date.getTime());
+                                intent.putExtra("selectedDr",doctorListSpinner.getSelectedItemPosition());
                                 startActivity(intent);
 
                             }else{
@@ -228,6 +230,8 @@ public class NewReservationMaster extends AppCompatActivity {
                                     intent.putExtra("allDrList",allDrList.toString());
                                     intent.putExtra("drIndex",drIndex.toString());
                                     intent.putExtra("dataIndex",dataIndex.toString());
+                                    intent.putExtra("selectedDay",date.getTime());
+                                    intent.putExtra("selectedDr",doctorListSpinner.getSelectedItemPosition());
                                     startActivity(intent);
                                 }else {
                                     Toast.makeText(NewReservationMaster.this,
@@ -276,8 +280,8 @@ public class NewReservationMaster extends AppCompatActivity {
 
         String url = getString(R.string.api) + "/api/AppointmentData/GetDoctorsAppointment";
         try {
-            header.put("Version","1.0");
-            header.put("CompanyId","4881017701");
+            header.put("Version",Tools.apiVersion());
+            header.put("CompanyId",Tools.companyId());
             header.put("ActionMode","GetDoctorsAppointment");
             data.put("StartMonth",simpleDateFormat.format(date));
             parameter.put("Header",header);
