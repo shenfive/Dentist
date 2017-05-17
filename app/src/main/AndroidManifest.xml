@@ -48,7 +48,11 @@
         <activity android:name=".ForgetPassword" />
         <activity android:name=".ModifyData" />
         <activity android:name=".ChangePinActivity" />
-        <activity android:name=".NewReservationDetial"></activity>
+        <activity android:name=".NewReservationDetial" />
+        <activity android:name=".MakeResrvationDiloag"
+            android:theme="@style/Transparent">
+
+        </activity>
     </application>
 
 </manifest>

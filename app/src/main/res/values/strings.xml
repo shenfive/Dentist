@@ -49,5 +49,7 @@
     <string name="passwordChanged">Password Changed</string>
     <string name="allDrctor">All Doctors</string>
     <string name="treatment">Treatment</string>
+    <string name="plsSelectDoctor">Please choose a doctor</string>
+    <string name="reservationConfirmation">Reservation Confirmation</string>
 
 </resources>

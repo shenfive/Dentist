@@ -50,6 +50,8 @@
     <string name="passwordChanged">己變更密碼</string>
     <string name="allDrctor">所有醫生</string>
     <string name="treatment">診療</string>
+    <string name="plsSelectDoctor">請選擇醫生</string>
+    <string name="ReservationConfirmation">確認預約</string>
 
 
 </resources>

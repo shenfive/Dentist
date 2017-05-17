@@ -1,5 +1,6 @@
 package idv.swj.dentist;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -47,6 +48,11 @@ public class NewReservationDetial extends AppCompatActivity {
     String[] treatmentId;
 
     @Override
+    protected void onResume(){
+        super.onResume();
+        updateRevTime();
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_reservation_detial);
@@ -91,15 +97,15 @@ public class NewReservationDetial extends AppCompatActivity {
             }
         });
 
-        updateRevTime();
 
         revTable.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @SuppressLint("SimpleDateFormat")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try{
-                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("StartDate"));
-                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("EndDate"));
-                    Log.d("clicked",position+":"+drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+""));
+//                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("StartDate"));
+//                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("EndDate"));
+//                    Log.d("clicked",position+":"+drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+""));
                     String selectedDrId = drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+"");
                     String drName="";
                     for(int i=0;i<allDrList.length() ;i++){
@@ -108,9 +114,20 @@ public class NewReservationDetial extends AppCompatActivity {
                             break;
                         }
                     }
-                    Log.d("clicked",position+":"+drName);
+//                    Log.d("clicked",position+":"+drName);
 
-                    Log.d("clicked", position + ":" + treatmentId[treatmentSpinner.getSelectedItemPosition()]);
+//                    Log.d("clicked", position + ":" + treatmentId[treatmentSpinner.getSelectedItemPosition()]);
+//                    Log.d("clicked", position + ":"+ treatmentSpinner.getSelectedItem().toString());
+                    Intent intent = new Intent(NewReservationDetial.this,MakeResrvationDiloag.class);
+                    intent.putExtra("doctorName",drName);
+                    intent.putExtra("doctorDisplayName",doctorListSpinner.getSelectedItem().toString());
+                    intent.putExtra("doctorID",selectedDrId);
+                    intent.putExtra("startDate",allrevTime.getJSONObject(position).getString("StartDate"));
+                    intent.putExtra("endDate",allrevTime.getJSONObject(position).getString("EndDate"));
+                    intent.putExtra("treatmentID",treatmentId[treatmentSpinner.getSelectedItemPosition()]);
+                    intent.putExtra("treatmentName",treatmentSpinner.getSelectedItem().toString());
+                    intent.putExtra("selectedDay",(new SimpleDateFormat("yyyy-MM-dd")).format(seletedDay));
+                    startActivity(intent);
 
 
                 }catch (Exception e){Log.d("Click Rev",e.getLocalizedMessage());}
