@@ -54,8 +54,6 @@ public class NewReservationMaster extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_reservation_master);
 
-        getSupportActionBar().hide(); //隱藏標題
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         loginPre = getSharedPreferences("loginStatus",0);
 
@@ -198,6 +196,48 @@ public class NewReservationMaster extends AppCompatActivity {
                     JSONObject dayObject = data.getJSONObject(index);
                     Log.d("Status",dayObject.getString("Status"));
 
+                    //傳送工作的人
+                    JSONArray dutyDoctors = dayObject.getJSONArray("DrIds");
+
+                    //移除重覆
+                    for(int i=0;i<dutyDoctors.length();i++){
+                        for(int j=(dutyDoctors.length()-1);j>i;j--){
+                            Log.d("Com",""+i+j+dutyDoctors.getString(i)+"xxx"+dutyDoctors.getString(j));
+                            if(dutyDoctors.getString(i).equals(dutyDoctors.getString(j))){
+                                dutyDoctors.put(j,"");
+                            }
+                        }
+                    }
+                    JSONArray clearDutyDoctors = new JSONArray();
+                    for(int i=0;i<dutyDoctors.length();i++){
+                        if(!dutyDoctors.getString(i).equals("")){
+                            clearDutyDoctors.put(dutyDoctors.get(i));
+                        }
+                    }
+
+                    //建立新的醫生清單
+                    JSONArray newAllDrList = new JSONArray();
+                    for(int i = 0;i<clearDutyDoctors.length();i++){
+                        for(int j=0;j<allDrList.length();j++){
+                            Log.d("NewAll",""+i+":"+j+":"+allDrList.getJSONObject(j).getString("DrId")+":"+clearDutyDoctors.getString(i));
+                            if(allDrList.getJSONObject(j).getString("DrId").equals(clearDutyDoctors.getString(i))){
+                                newAllDrList.put(allDrList.getJSONObject(j));
+                                break;
+                            }
+                        }
+                    }
+
+                    //建立新的醫生索引
+                    JSONObject newDrIndex=new JSONObject();
+                    for(int i = 0;i<newAllDrList.length();i++){
+                        Log.d("all",i+newAllDrList.getJSONObject(i).toString());
+                        newDrIndex.put(i+"",newAllDrList.getJSONObject(i).getString("DrId"));
+                    }
+
+
+
+
+
                     switch (dayObject.getString("Status")) {
                         case "E":
                             Toast.makeText(NewReservationMaster.this, "Stauuts is E", Toast.LENGTH_SHORT).show();
@@ -206,14 +246,16 @@ public class NewReservationMaster extends AppCompatActivity {
                             Toast.makeText(NewReservationMaster.this, "Stauuts is C", Toast.LENGTH_SHORT).show();
                             break;
                         case "O":
+
+                            Intent intent = new Intent(NewReservationMaster.this, NewReservationDetial.class);
+                            intent.putExtra("data", data.toString());
+                            intent.putExtra("dataIndex",dataIndex.toString());
+                            intent.putExtra("allDrList",newAllDrList.toString());
+                            intent.putExtra("drIndex",newDrIndex.toString());
+                            intent.putExtra("selectedDay",date.getTime());
+
                             if (selectedDrID.equals("notSelect")) {
-                                Intent intent = new Intent(NewReservationMaster.this, NewReservationDetial.class);
-                                intent.putExtra("data", data.toString());
-                                intent.putExtra("allDrList",allDrList.toString());
-                                intent.putExtra("drIndex",drIndex.toString());
-                                intent.putExtra("dataIndex",dataIndex.toString());
-                                intent.putExtra("selectedDay",date.getTime());
-                                intent.putExtra("selectedDr",doctorListSpinner.getSelectedItemPosition());
+                                intent.putExtra("selectedDr",0);
                                 startActivity(intent);
 
                             }else{
@@ -222,20 +264,21 @@ public class NewReservationMaster extends AppCompatActivity {
                                 for (int j = 0; j < drIds.length(); j++) {
                                     if (selectedDrID.equals(drIds.getString(j))) {
                                     drWordFlag = true;
+
                                     }
                                 }
-                                if (drWordFlag) {
-                                    Intent intent = new Intent(NewReservationMaster.this, NewReservationDetial.class);
-                                    intent.putExtra("data", data.toString());
-                                    intent.putExtra("allDrList",allDrList.toString());
-                                    intent.putExtra("drIndex",drIndex.toString());
-                                    intent.putExtra("dataIndex",dataIndex.toString());
-                                    intent.putExtra("selectedDay",date.getTime());
-                                    intent.putExtra("selectedDr",doctorListSpinner.getSelectedItemPosition());
-                                    startActivity(intent);
-                                }else {
+                                if (!drWordFlag) {
                                     Toast.makeText(NewReservationMaster.this,
                                             "Stauuts is not Doctor Working Day", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    for(int i=0;i<newAllDrList.length();i++){
+                                        Log.d("SelectID",i+newAllDrList.getJSONObject(i).getString("DrId")+":"+selectedDrID+":");
+                                        if(newAllDrList.getJSONObject(i).getString("DrId").equals(selectedDrID)){
+                                            intent.putExtra("selectedDr",i+1);
+                                            break;
+                                        }
+                                    }
+                                    startActivity(intent);
                                 }
                             }
 
@@ -247,11 +290,6 @@ public class NewReservationMaster extends AppCompatActivity {
 
                     Log.d("get day data",e.getLocalizedMessage());
                 }
-
-
-
-
-
 
             }
 
@@ -488,12 +526,18 @@ public class NewReservationMaster extends AppCompatActivity {
 //                    加入日期事件
                     List<Event> events = new ArrayList<Event>();
                     for(int i = 0;i<data.length();i++){
-                        JSONObject object = data.getJSONObject(i);
-                        dataIndex.put(object.getString("Date"),i);
-//                        data.put(i,object);
+
+                        JSONObject day = data.getJSONObject(i);
+
+                        //若當日無醫生, 視為休息
+                        if(day.getJSONArray("DrIds").length() == 0 ){
+                            day.put("Status","C");
+                            data.put(i,day);
+                        }
+
+                        dataIndex.put(day.getString("Date"),i);
 
                         // 加入行事曆
-                        JSONObject day = data.getJSONObject(i);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         Date date = simpleDateFormat.parse(day.getString("Date"));
                         Event event = null;

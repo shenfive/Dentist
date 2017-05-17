@@ -14,8 +14,6 @@ public class Therapy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_therapy);
 
-        getSupportActionBar().hide(); //隱藏標題
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
 
         webView = (WebView)findViewById(R.id.therapyWeb);
         webView.loadUrl("http://www.charmingdent.com.tw/service.html");

@@ -39,11 +39,6 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        try {
-            getSupportActionBar().hide(); //隱藏標題
-        }catch (Exception e){
-            Log.d("error",e.getLocalizedMessage());
-        }
         account = (EditText)findViewById(R.id.nID);
         password = (EditText)findViewById(R.id.password);
         loginPre = getSharedPreferences("loginStatus",0);

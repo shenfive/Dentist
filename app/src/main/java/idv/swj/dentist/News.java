@@ -37,9 +37,6 @@ public class News extends AppCompatActivity {
         setContentView(R.layout.activity_news);
 
 
-        getSupportActionBar().hide(); //隱藏標題
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
-
 
         newsSharedPreferences = getSharedPreferences("News",0);
 

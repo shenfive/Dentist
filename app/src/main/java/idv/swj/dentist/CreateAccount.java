@@ -63,10 +63,6 @@ public class CreateAccount extends AppCompatActivity {
         nID = (EditText)findViewById(R.id.nID);
 
 
-        getSupportActionBar().hide(); //隱藏標題
-
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION); //隱藏狀態
-
         account.requestFocus();
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

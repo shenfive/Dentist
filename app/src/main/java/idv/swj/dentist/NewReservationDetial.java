@@ -8,9 +8,12 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,49 +35,89 @@ public class NewReservationDetial extends AppCompatActivity {
     Spinner doctorListSpinner,treatmentSpinner;
 
     JSONArray data;
+    JSONArray allrevTime;//可預約清單
     JSONArray allDrList;
     JSONObject dataIndex;
     JSONObject drIndex;
     Date seletedDay;
+    TextView theDay;
     GetDrTimeAsyncTask getDrTimeAsyncTask;
     ListView revTable;
+    String dateS;
+    String[] treatmentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_reservation_detial);
-        getSupportActionBar().hide(); //隱藏標題
 
+
+        treatmentId = new String[]{"TA","TC","CK","IQ","PR","OT"};
         revTable = (ListView)findViewById(R.id.revTable);
+        theDay = (TextView)findViewById(R.id.theDay);
         doctorListSpinner = (Spinner)findViewById(R.id.doctorDiListSpinner);
+
         treatmentSpinner = (Spinner)findViewById(R.id.treatmentSpinner);
         ArrayAdapter<String> arrayAdapter =
                 new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item
-                        , new String[]{"牙痛","補助牙","檢查","諮詢","延續之前療程"});
+                        , new String[]{"牙痛","補助牙","檢查","諮詢","延續之前療程","其他"});
         treatmentSpinner.setAdapter(arrayAdapter);
-
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Bundle bundle = this.getIntent().getExtras();
-
-
         try {
             data = new JSONArray(bundle.getString("data"));
             allDrList = new JSONArray(bundle.getString("allDrList"));
             dataIndex = new JSONObject(bundle.getString("dataIndex"));
             drIndex = new JSONObject(bundle.getString("drIndex"));
-            seletedDay = new Date(bundle.getLong("seletedDay"));
+            seletedDay = new Date(bundle.getLong("selectedDay"));
         }catch (Exception e){
             Log.d("get dats",e.getLocalizedMessage());
         }
-
+        dateS = simpleDateFormat.format(seletedDay);
+        theDay.setText(dateS);
         setDoctorList();
         doctorListSpinner.setSelection(bundle.getInt("selectedDr"));
 
-        Log.d("Data:",data.toString()+dataIndex.toString());
+        doctorListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateRevTime();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         updateRevTime();
 
+        revTable.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try{
+                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("StartDate"));
+                    Log.d("clicked",position+":"+allrevTime.getJSONObject(position).getString("EndDate"));
+                    Log.d("clicked",position+":"+drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+""));
+                    String selectedDrId = drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+"");
+                    String drName="";
+                    for(int i=0;i<allDrList.length() ;i++){
+                        if(allDrList.getJSONObject(i).getString("DrId").equals(selectedDrId)){
+                            drName = allDrList.getJSONObject(i).getString("ChineseName");
+                            break;
+                        }
+                    }
+                    Log.d("clicked",position+":"+drName);
+
+                    Log.d("clicked", position + ":" + treatmentId[treatmentSpinner.getSelectedItemPosition()]);
 
 
+                }catch (Exception e){Log.d("Click Rev",e.getLocalizedMessage());}
+
+
+            }
+        });
     }
 
     protected void updateRevTime(){
@@ -87,8 +130,8 @@ public class NewReservationDetial extends AppCompatActivity {
             header.put("Version", Tools.apiVersion())
                     .put("CompanyId", Tools.companyId())
                     .put("ActionMode", "GetDrTimeTable");
-            data.put("DrId","Tiffany" )
-                    .put("Date", "2017-05-18");
+            data.put("DrId",drIndex.getString((doctorListSpinner.getSelectedItemPosition()-1)+"") )
+                    .put("Date", dateS);
             jsonObject.put("Data", data)
                     .put("Header",header);
             Log.d("Location","Json");
@@ -124,7 +167,7 @@ public class NewReservationDetial extends AppCompatActivity {
         //取得醫師清單
         ArrayList<String> list = new ArrayList<String>();
 
-        list.add(getString(R.string.allDrctor));
+        list.add(getString(R.string.plsSelectDoctor));
 
         for(int i=0;i<allDrList.length();i++){
             try {
@@ -140,8 +183,6 @@ public class NewReservationDetial extends AppCompatActivity {
 
 
     }
-
-
 
     public class GetDrTimeAsyncTask extends AsyncTask<String, String, String> {
 
@@ -208,7 +249,7 @@ public class NewReservationDetial extends AppCompatActivity {
 
             JSONObject jsonObject;
             JSONObject header;
-            JSONArray data;
+            allrevTime = new JSONArray();
             try {
                 //display response data
                 jsonObject = new JSONObject(progress[0]);
@@ -219,18 +260,21 @@ public class NewReservationDetial extends AppCompatActivity {
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
-                    data = jsonObject.getJSONArray("Data");
-                    Log.d("Dataxxxxx",data.toString());
+                    allrevTime = jsonObject.getJSONArray("Data");
+//                    Log.d("Dataxxxxx",data.toString());
 
-                    String[] revTableString = new String[data.length()];
-                    for(int i=0;i<data.length();i++){
-                        revTableString[i] = data.getJSONObject(i).getString("StartDate")+"~\n"+
-                                data.getJSONObject(i).getString("EndDate");
+                    String[] revTableString = new String[allrevTime.length()];
+                    for(int i=0;i<allrevTime.length();i++){
+                        String start = allrevTime.getJSONObject(i).getString("StartDate");
+                        String end = allrevTime.getJSONObject(i).getString("EndDate");
+
+
+                        revTableString[i] = start.substring(11,16)+"~"+end.substring(11,16)+" (可 APP 預約)";
                     }
-                    ArrayAdapter<String> newsAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,revTableString);
-                    revTable.setAdapter(newsAdapter);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,revTableString);
+                    ListView listView = (ListView)context.findViewById(R.id.revTable);
+                    listView.setAdapter(adapter);
 
-//                    context.finish();
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
                 }

@@ -54,7 +54,6 @@ public class ModifyData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_data);
 
-        getSupportActionBar().hide(); //隱藏標題
 
         account = (TextView)findViewById(R.id.maAccount);
         nameET = (EditText)findViewById(R.id.maName);
@@ -89,10 +88,12 @@ public class ModifyData extends AppCompatActivity {
         } catch (ParseException e) {            e.printStackTrace();
         }
         maBirthdayDatePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        String birthdatS = loginPre.getString("Birthday","20151231");
+        String birthdatS = loginPre.getString("Birthday","2015-12-31");
+
         int bYear = Integer.parseInt(birthdatS.substring(0,4));
         int bMonth = Integer.parseInt(birthdatS.substring(5,7))-1; // 月份計算為 0~11
-        int bDay = Integer.parseInt(birthdatS.substring(6,8));
+        int bDay = Integer.parseInt(birthdatS.substring(8,10));
+//        Log.d("BirthdayS",birthdatS+"/"+bYear+"/"+bMonth+"/"+bDay);
         maBirthdayDatePicker.updateDate(bYear,bMonth,bDay);
 
 
