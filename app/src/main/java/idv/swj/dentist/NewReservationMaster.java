@@ -78,6 +78,7 @@ public class NewReservationMaster extends AppCompatActivity {
                             dataIndex.put(object.getString("Date"),i);
                             data.put(i,object);
                             Log.d("all",data.getJSONObject(i).toString());
+                            
                             // 加入行事曆
                             JSONObject day = data.getJSONObject(i);
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
