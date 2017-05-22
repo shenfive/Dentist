@@ -38,7 +38,6 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         account = (EditText)findViewById(R.id.nID);
         password = (EditText)findViewById(R.id.password);
         loginPre = getSharedPreferences("loginStatus",0);
@@ -68,40 +67,6 @@ public class Login extends AppCompatActivity {
     public void onClickForgetPassword(View v){
         Intent intent = new Intent(this,ForgetPassword.class);
         startActivity(intent);
-    }
-
-    public String[] checkPassword(String password){
-
-        String status[] = {"",""};
-
-
-        //用正規表示法檢查是否包含英數字
-        String patternStr1 = "[a-zA-Z]{1}";
-        Pattern pattern1 = Pattern.compile(patternStr1);
-        Matcher matcher1 = pattern1.matcher(password);
-        boolean matchFound1 = matcher1.find();
-
-        String patternStr2 = "[0-9]{1}";
-        Pattern pattern2 = Pattern.compile(patternStr2);
-        Matcher matcher2 = pattern2.matcher(password);
-        boolean matchFound2 = matcher2.find();
-        boolean matchFound = matchFound1 & matchFound2;
-
-
-        if( (password.length() < 6 ) || (password.length() >8 ) ){
-            status[0] = "401";
-            status[1] = getResources().getString(R.string.passwordError001Len);
-        }else if( !matchFound ){
-            status[0] = "402";
-            status[1] = getResources().getString(R.string.passwordError002Character);
-        }else{
-            status[0] = "200";
-            status[1] = "true";
-        }
-
-
-
-        return status;
     }
 
 

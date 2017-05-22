@@ -67,6 +67,10 @@ public class MakeResrvationDiloag extends AppCompatActivity {
     }
 
     public void onClickSubmit(View v) {
+        if(!Tools.checkNetworkConnected(this)){
+            Tools.showMessage(this,"Network Fail.....TODO UPDATE");
+            return;
+        };
         String url = getString(R.string.api)+"/api/AppointmentData/AddAppointment";
 
         JSONObject jsonObject = new JSONObject();

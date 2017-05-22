@@ -1,19 +1,32 @@
 package idv.swj.dentist;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.content.ContextWrapper;
+import android.content.ContextWrapper.*;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.*;
+
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 /**
  * Created by shenf on 2017/5/10.
@@ -158,6 +171,7 @@ public class Tools {
         Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
 
     }
+
     private static byte [] getHash(String password) {
         MessageDigest digest = null ;
         try {
@@ -193,104 +207,57 @@ public class Tools {
         return yrarS+"-"+monthS+"-"+dayS;
     }
 
+    static boolean updateRevStatus(Context context){
+
+        //無網路就不更新
+        if(!checkNetworkConnected(context)){return false;}
+
+        //未登入就不更新
+        SharedPreferences loginPre;
+        loginPre = new ContextWrapper(context).getSharedPreferences("loginStatus",0);
+        if(loginPre.getString("status","logout").equals("logout")){return false;}
+        String account = loginPre.getString("Account","");
+        if(account.equals("")){return false;}
 
 
 
-//    public class xxxxAsyncTask extends AsyncTask<String, String, String> {
-//
-//        Activity context;
-//        ProgressDialog progressDialog;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            //before works
-//        }
-//        @Override
-//        protected String  doInBackground(String... params) {
-//
-//
-//            Log.d("Location","doInBackground");
-//
-//            try {
-//                JSONObject jsonObject = new JSONObject(params[1]);
-//                URL url = new URL(params[0]); //define the url we have to connect with
-//                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
-//                urlConnection.setConnectTimeout(13000);//set timeout to 10 seconds
-//                urlConnection.setReadTimeout(7000);//設置讀取超時為5秒
-//                urlConnection.setRequestMethod("POST"); //設置請求的方法為POST
-//                urlConnection.setInstanceFollowRedirects(true);
-//                urlConnection.setRequestProperty("Content-Type","application/json");
-//                urlConnection.setDoInput(true);//可從伺服器取得資料
-//                urlConnection.setDoOutput(true);//可寫入資料至伺服器
-//                urlConnection.setUseCaches (false);//POST方法不能緩存數據,需手動設置使用緩存的值為false
-//
-//                DataOutputStream wr = new DataOutputStream (urlConnection.getOutputStream());
-//
-//                byte[] outputBytes = jsonObject.toString().getBytes("UTF-8");
-//                wr.write(outputBytes);
-//                wr.flush ();
-//                wr.close ();
-//
-//                //Get Response
-//                InputStream is = urlConnection.getInputStream();
-//                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//                String line;
-//                StringBuffer response = new StringBuffer();
-//
-//                while((line = rd.readLine()) != null) {
-//                    response.append(line);
-//                    response.append('\r');
-//                }
-//                JSONObject jsonObject1 = new JSONObject(response.toString());
-//                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
-//
-//                rd.close();
-//                publishProgress(jsonObject1.toString()); // 取得回應後的處理
-//
-//
-//            }catch (Exception ex){
-//
-//                Log.d("flag","error:"+ex.toString());
-//            }
-//            return null;
-//        }
-//
-//
-//
-//        protected void onProgressUpdate(String... progress) {
-//
-//            progressDialog.cancel();
-//            JSONObject jsonObject;
-//            JSONObject header;
-//            JSONObject data;
-//            try {
-//                //display response data
-//                jsonObject = new JSONObject(progress[0]);
-//                header = jsonObject.getJSONObject("Header");
-//
-//
-//
-//                Log.d("Fin:",header.getString("StatusCode"));
-//
-//                if (header.getString("StatusCode").equals("0000")) {
-//                    context.finish();
-//                }else{
-//                    Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
-//                }
-//
-//
-//            } catch (Exception ex) {
-//                Log.d("error",ex.getLocalizedMessage());
-//            }
-//
-//        }
-//
-//        protected void onPostExecute(String  result2){
-//
-//
-//        }
-//
-//    }
+        //打API 更新
+        UpdateRevRecAsyncTask updateRevRecAsyncTask = new UpdateRevRecAsyncTask();
+
+
+        String url = context.getString(R.string.api)+"/api/AppointmentData/GetCurrentAppointmentRecord";
+
+        JSONObject jsonObject = new JSONObject();
+        JSONObject header = new JSONObject();
+        JSONObject data = new JSONObject();
+        try {
+            header.put("Version", Tools.apiVersion());
+            header.put("CompanyId", Tools.companyId());
+            header.put("ActionMode", "GetCurrentAppointmentRecord");
+            data.put("Account", account);
+            jsonObject.put("Header", header);
+            jsonObject.put("Data", data);
+            Log.d("Location",url+jsonObject.toString());
+
+            updateRevRecAsyncTask.context = (Activity) context;
+            ProgressDialog progressDialog=new ProgressDialog(context);
+            progressDialog.setMessage(context.getString(R.string.wait));
+            progressDialog.show();
+            updateRevRecAsyncTask.progressDialog = progressDialog;
+
+            updateRevRecAsyncTask.execute(url,jsonObject.toString());
+
+        }catch (Exception e){
+            Log.d("json error",e.getLocalizedMessage());
+        }
+
+
+
+
+        return true;
+    }
+
+
 
 }
 

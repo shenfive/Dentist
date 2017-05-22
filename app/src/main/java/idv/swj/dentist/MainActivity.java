@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //己登入測試
         modifyLoginStatusUI();
+        Tools.updateRevStatus(this);
     }
 
 
