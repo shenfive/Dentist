@@ -51,5 +51,8 @@
     <string name="treatment">Treatment</string>
     <string name="plsSelectDoctor">Please choose a doctor</string>
     <string name="reservationConfirmation">Reservation Confirmation</string>
+    <string name="historyAppointment">Expired</string>
+    <string name="ReservationConfirmation">Confirm</string>
+    <string name="myAppointment">My Appointment</string>
 
 </resources>

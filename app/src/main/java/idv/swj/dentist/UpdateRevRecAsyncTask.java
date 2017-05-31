@@ -24,6 +24,7 @@ import java.net.URL;
 public class UpdateRevRecAsyncTask extends AsyncTask<String, String, String> {
     Activity context;
     ProgressDialog progressDialog;
+    Boolean current;
 
     @Override
     protected void onPreExecute() {
@@ -33,11 +34,18 @@ public class UpdateRevRecAsyncTask extends AsyncTask<String, String, String> {
     protected String  doInBackground(String... params) {
 
 
-        Log.d("Location","doInBackground");
+
+
 
         try {
             JSONObject jsonObject = new JSONObject(params[1]);
             URL url = new URL(params[0]); //define the url we have to connect with
+
+            current = url.toString().equals(context.getString(R.string.api)+"/api/AppointmentData/GetCurrentAppointmentRecord");
+
+
+
+
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();//make connect with url and send request
             urlConnection.setConnectTimeout(13000);//set timeout to 10 seconds
             urlConnection.setReadTimeout(7000);//設置讀取超時為5秒
@@ -91,6 +99,7 @@ public class UpdateRevRecAsyncTask extends AsyncTask<String, String, String> {
             //display response data
             jsonObject = new JSONObject(progress[0]);
             header = jsonObject.getJSONObject("Header");
+            Log.d("updated", jsonObject.toString());
 
 
 
@@ -98,13 +107,23 @@ public class UpdateRevRecAsyncTask extends AsyncTask<String, String, String> {
 
             if (header.getString("StatusCode").equals("0000")) {
                 data = jsonObject.getJSONArray("Data");
+                Log.d("xxxxx",current.toString()+data.toString());
                 SharedPreferences myRev;
-                myRev = context.getSharedPreferences("myAppointment",0);
-                SharedPreferences.Editor editor = myRev.edit();
-                editor.clear();
-                editor.putString("res",data.toString()).commit();
-                // TODO 建立提醒
 
+                if(current) {
+                    myRev = context.getSharedPreferences("myAppointment", 0);
+                    SharedPreferences.Editor editor = myRev.edit();
+                    editor.clear();
+                    editor.putString("res", data.toString()).commit();
+
+
+                    // TODO 建立提醒
+                }else {
+                    myRev = context.getSharedPreferences("myAppointmentHistory", 0);
+                    SharedPreferences.Editor editor = myRev.edit();
+                    editor.clear();
+                    editor.putString("res", data.toString()).commit();
+                }
 
 
             }else{

@@ -100,13 +100,6 @@ public class MakeResrvationDiloag extends AppCompatActivity {
 
             addAppointmentAsyncTask.execute(url,jsonObject.toString());
 
-
-
-
-
-
-
-
         }catch (Exception e){
             Log.d("json error",e.getLocalizedMessage());
         }
@@ -196,6 +189,8 @@ public class MakeResrvationDiloag extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), getString(R.string.reservationConfirmation)
                             +":" + data.getString("AppointmentNo"), Toast.LENGTH_LONG).show();
+                    Tools.updateRevStatus(context);
+                    Tools.updateRevHistoryStatus(context);
                     context.finish();
                 } else {
                     Toast.makeText(getApplicationContext(), header.getString("StatusDesc"), Toast.LENGTH_LONG).show();

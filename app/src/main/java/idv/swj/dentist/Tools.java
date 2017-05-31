@@ -257,6 +257,56 @@ public class Tools {
         return true;
     }
 
+    static boolean updateRevHistoryStatus(Context context){
+
+        //無網路就不更新
+        if(!checkNetworkConnected(context)){return false;}
+
+        //未登入就不更新
+        SharedPreferences loginPre;
+        loginPre = new ContextWrapper(context).getSharedPreferences("loginStatus",0);
+        if(loginPre.getString("status","logout").equals("logout")){return false;}
+        String account = loginPre.getString("Account","");
+        if(account.equals("")){return false;}
+
+
+
+        //打API 更新
+        UpdateRevRecAsyncTask updateRevRecAsyncTask = new UpdateRevRecAsyncTask();
+
+
+        String url = context.getString(R.string.api)+"/api/AppointmentData/GetExpiredAppointmentRecord";
+
+        JSONObject jsonObject = new JSONObject();
+        JSONObject header = new JSONObject();
+        JSONObject data = new JSONObject();
+        try {
+            header.put("Version", Tools.apiVersion());
+            header.put("CompanyId", Tools.companyId());
+            header.put("ActionMode", "GetExpiredAppointmentRecord");
+            data.put("Account", account);
+            jsonObject.put("Header", header);
+            jsonObject.put("Data", data);
+            Log.d("Location",url+jsonObject.toString());
+
+            updateRevRecAsyncTask.context = (Activity) context;
+            ProgressDialog progressDialog=new ProgressDialog(context);
+            progressDialog.setMessage(context.getString(R.string.wait));
+            progressDialog.show();
+            updateRevRecAsyncTask.progressDialog = progressDialog;
+
+            updateRevRecAsyncTask.execute(url,jsonObject.toString());
+
+        }catch (Exception e){
+            Log.d("json error",e.getLocalizedMessage());
+        }
+
+
+
+
+        return true;
+    }
+
 
 
 }

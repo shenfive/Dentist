@@ -6,4 +6,63 @@
     android:layout_height="match_parent"
     tools:context="idv.swj.dentist.MyReservation">
 
+    <TextView
+        android:id="@+id/myReservationTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/myReservation"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myReservationTitle"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:id="@+id/linearLayout5">
+
+        <Button
+            android:id="@+id/button9"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickCurrent"
+            android:text="@string/myAppointment" />
+
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickHistory"
+            android:text="@string/historyAppointment" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/revListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
 </android.support.constraint.ConstraintLayout>

@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         //己登入測試
         modifyLoginStatusUI();
         Tools.updateRevStatus(this);
+        Tools.updateRevHistoryStatus(this);
     }
 
 
