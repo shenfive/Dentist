@@ -49,10 +49,12 @@
     <string name="oldPassword">旧密码</string>
     <string name="passwordChanged">己变更密码</string>
     <string name="allDrctor">所有医生</string>
-    <string name="treatment">诊疗</string>
+    <string name="treatment">诊疗项目</string>
     <string name="plsSelectDoctor">请选择医生</string>
     <string name="ReservationConfirmation">确认预约</string>
     <string name="reservationConfirmation"></string>
     <string name="historyAppointment">过期预约记录</string>
     <string name="myAppointment">目前預約記錄</string>
+    <string name="doctorName">医师:</string>
+    <string name="appointmentTime">預約時間</string>
 </resources>

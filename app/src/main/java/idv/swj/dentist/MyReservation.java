@@ -61,8 +61,7 @@ public class MyReservation extends AppCompatActivity {
             }catch (Exception e){Log.d("REV",e.getLocalizedMessage());}
         }
         Log.d("REV",arrayList.toString());
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,arrayList);
-        MyCurrentResListitem myCurrentResListitem = new MyCurrentResListitem(this,data);
+        MyCurrentResListitem myCurrentResListitem = new MyCurrentResListitem(this,data,1);
         myReservationList.setAdapter(myCurrentResListitem);
 
     }
@@ -88,8 +87,14 @@ public class MyReservation extends AppCompatActivity {
         }
         Log.d("REV",arrayList.toString());
 //        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,arrayList);
-        MyCurrentResListitem myCurrentResListitem = new MyCurrentResListitem(this,data);
+        MyCurrentResListitem myCurrentResListitem = new MyCurrentResListitem(this,data,0);
         myReservationList.setAdapter(myCurrentResListitem);
+
+    }
+
+
+    public void testb1(View v){
+        Log.d("hello","clicked");
 
     }
 }

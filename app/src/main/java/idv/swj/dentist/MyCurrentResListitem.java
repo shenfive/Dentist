@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -19,6 +21,7 @@ public class MyCurrentResListitem extends BaseAdapter {
 
     private LayoutInflater layoutInflater;
     private JSONArray data;
+    private int status;
 
 
     @Override
@@ -51,9 +54,20 @@ public class MyCurrentResListitem extends BaseAdapter {
             holder = new MyCurrentResListitem.Holder(
                     (TextView)v.findViewById(R.id.appomentTime),
                     (TextView)v.findViewById(R.id.appointmentDrName),
-                    (TextView)v.findViewById(R.id.appointmentTreatmentId)
+                    (TextView)v.findViewById(R.id.appointmentTreatmentId),
+                    (Button)v.findViewById(R.id.confAppoint),
+                    (Button)v.findViewById(R.id.changeAppoint),
+                    (Button)v.findViewById(R.id.cancleAppoint)
+
             );
+            if (status == 0) {
+                holder.confAppoint.setVisibility(View.GONE);
+                holder.changeAppoint.setVisibility(View.GONE);
+                holder.cancelAppoint.setVisibility(View.GONE);
+            }
             v.setTag(holder);
+
+
 
         }else {
             holder = (MyCurrentResListitem.Holder)v.getTag();
@@ -61,7 +75,9 @@ public class MyCurrentResListitem extends BaseAdapter {
         try {
             JSONObject itemData = data.getJSONObject(position);
             Log.d("dataItme",itemData.toString());
-            holder.appointmetTime.setText(itemData.getString("AppointmentStartTime")+"~"+
+            holder.appointmetTime.setText(itemData.getString("AppointmentStartTime").substring(0,10)+"    "+
+                    itemData.getString("AppointmentStartTime").substring(11,16)+
+                    "~"+
                     itemData.getString("AppointmentEndTime").substring(11,16));
             holder.doctorName.setText(itemData.getString("DrName"));
             holder.treatmentId.setText(itemData.getString("TreatmentId"));
@@ -73,19 +89,28 @@ public class MyCurrentResListitem extends BaseAdapter {
         return v;
     }
 
-    public MyCurrentResListitem(Context context, JSONArray data){
+    public MyCurrentResListitem(Context context, JSONArray data, int status){
+        // status 0 代表過去, 1 代表現
         layoutInflater = LayoutInflater.from(context);
         this.data = data;
+        this.status = status;
     }
+
+
 
     class Holder{
         TextView appointmetTime,doctorName,treatmentId;
-        public Holder(TextView texappointme,TextView doctorName,TextView treatmentId){
+        Button confAppoint,changeAppoint,cancelAppoint;
+        public Holder(TextView texappointme,TextView doctorName,TextView treatmentId,
+                      Button confAppoint,Button changeAppoint,Button cancelAppoint){
             this.appointmetTime = texappointme;
             this.doctorName = doctorName;
             this.treatmentId = treatmentId;
-
+            this.confAppoint =  confAppoint;
+            this.changeAppoint = changeAppoint;
+            this.cancelAppoint = cancelAppoint;
         }
+
     }
 
 }

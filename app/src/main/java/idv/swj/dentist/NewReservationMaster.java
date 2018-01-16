@@ -315,7 +315,7 @@ public class NewReservationMaster extends AppCompatActivity {
         JSONObject parameter = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMM");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
 
         String url = getString(R.string.api) + "/api/AppointmentData/GetDoctorsAppointment";
         try {

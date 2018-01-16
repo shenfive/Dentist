@@ -11,14 +11,12 @@
         android:id="@+id/linearLayout6"
         android:layout_width="0dp"
         android:layout_height="44sp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
         android:orientation="horizontal"
+        android:background="#77cfd6"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/userName"
@@ -65,14 +63,11 @@
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
             android:gravity="center_horizontal"
             android:text="@string/title"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
+            android:background="#77cfd6"
+            android:textColor="#ffffff"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -83,9 +78,8 @@
             android:id="@+id/login"
             android:layout_width="88dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="0dp"
+            android:background="@drawable/login"
             android:gravity="center"
             android:onClick="buttonOnClick"
             android:text="@string/login"
@@ -127,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/tooth" />
+            app:srcCompat="@drawable/img_0" />
 
     </LinearLayout>
 
@@ -140,50 +134,80 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintLeft_creator="1">
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1">
 
-        <Button
-            android:id="@+id/newReservation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="buttonOnClick"
-            android:text="@string/newReservation" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-        <Button
-            android:id="@+id/myReservation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="buttonOnClick"
-            android:text="@string/myReservation" />
+            <Button
+                android:id="@+id/newReservation"
+                android:layout_width="0dp"
+                android:layout_height="138sp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/reservation"
+                android:onClick="buttonOnClick"
+                android:text="@string/newReservation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/myReservation"
+                android:layout_width="match_parent"
+                android:layout_height="138sp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/record"
+                android:onClick="buttonOnClick"
+                android:text="@string/myReservation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="50dp"
+        android:background="#77cfd6"
         android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintLeft_creator="1">
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1">
 
         <Button
             android:id="@+id/tab1b"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#77cfd6"
             android:onClick="buttonOnClick"
             android:text="@string/tab1"
+            android:textColor="#ffffff"
             android:textSize="13sp" />
 
         <Button
@@ -191,8 +215,10 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#77cfd6"
             android:onClick="buttonOnClick"
             android:text="@string/tab2"
+            android:textColor="#ffffff"
             android:textSize="13sp" />
 
         <Button
@@ -200,8 +226,10 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#77cfd6"
             android:onClick="buttonOnClick"
             android:text="@string/tab3"
+            android:textColor="#ffffff"
             android:textSize="13sp" />
 
         <Button
@@ -209,8 +237,10 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#77cfd6"
             android:onClick="buttonOnClick"
             android:text="@string/tab4"
+            android:textColor="#ffffff"
             android:textSize="13sp" />
 
 
