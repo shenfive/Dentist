@@ -56,5 +56,6 @@
     <string name="myAppointment">My Appointment</string>
     <string name="doctorName">Doctor Name</string>
     <string name="appointmentTime">Appointment</string>
+    <string name="changePassword">Chaneg Password</string>
 
 </resources>

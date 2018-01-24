@@ -56,6 +56,7 @@
     <string name="myAppointment">目前预约记录</string>
     <string name="doctorName">醫師:</string>
     <string name="appointmentTime">预约时间</string>
+    <string name="changePassword">變更密碼</string>
 
 
 </resources>

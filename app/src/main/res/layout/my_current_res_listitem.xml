@@ -20,7 +20,8 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="@string/appointmentTime" />
+            android:text="@string/appointmentTime"
+            android:textColor="@color/mainDarkGrayText" />
 
         <TextView
             android:id="@+id/appomentTime"
@@ -41,7 +42,8 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="@string/doctorName" />
+            android:text="@string/doctorName"
+            android:textColor="@color/mainDarkGrayText" />
 
         <TextView
             android:id="@+id/appointmentDrName"
@@ -62,7 +64,8 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="@string/treatment" />
+            android:text="@string/treatment"
+            android:textColor="@color/mainDarkGrayText" />
 
         <TextView
             android:id="@+id/appointmentTreatmentId"
@@ -81,30 +84,33 @@
 
         <Button
             android:id="@+id/confAppoint"
-            android:layout_width="121sp"
-            android:layout_height="31sp"
+            android:layout_width="52sp"
+            android:layout_height="19sp"
             android:layout_weight="1"
             android:background="@drawable/button_3h"
             android:onClick="testb1"
             android:text="@string/ReservationConfirmation"
-            android:textColor="@color/mainLightText" />
+            android:textColor="@color/mainLightText"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/changeAppoint"
-            android:layout_width="121sp"
-            android:layout_height="31sp"
+            android:layout_width="50sp"
+            android:layout_height="19dp"
             android:layout_weight="1"
             android:background="@drawable/button_3h"
-            android:textColor="@color/mainLightText" />
+            android:textColor="@color/mainLightText"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/cancleAppoint"
-            android:layout_width="121sp"
-            android:layout_height="31sp"
+            android:layout_width="50sp"
+            android:layout_height="19sp"
             android:layout_weight="1"
             android:background="@drawable/button_3h"
             android:text="@string/cancel"
-            android:textColor="@color/mainLightText" />
+            android:textColor="@color/mainLightText"
+            android:textSize="12sp" />
     </LinearLayout>
 
 </LinearLayout>

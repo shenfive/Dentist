@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appver">Ver. a0.51.0602</string>
+    <string name="appver">Ver. a0.52.0235</string>
     <string name="api">http://220.135.157.238:1113</string>
 
 </resources>
