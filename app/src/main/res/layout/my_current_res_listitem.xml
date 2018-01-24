@@ -2,6 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/round_rect_shap"
+    android:paddingTop="10sp"
+    android:paddingBottom="10sp"
+    android:paddingLeft="10sp"
+    android:paddingRight="10sp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -76,24 +81,30 @@
 
         <Button
             android:id="@+id/confAppoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="121sp"
+            android:layout_height="31sp"
             android:layout_weight="1"
+            android:background="@drawable/button_3h"
             android:onClick="testb1"
-            android:text="@string/ReservationConfirmation" />
+            android:text="@string/ReservationConfirmation"
+            android:textColor="@color/mainLightText" />
 
         <Button
             android:id="@+id/changeAppoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="121sp"
+            android:layout_height="31sp"
+            android:layout_weight="1"
+            android:background="@drawable/button_3h"
+            android:textColor="@color/mainLightText" />
 
         <Button
             android:id="@+id/cancleAppoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="121sp"
+            android:layout_height="31sp"
             android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:background="@drawable/button_3h"
+            android:text="@string/cancel"
+            android:textColor="@color/mainLightText" />
     </LinearLayout>
 
 </LinearLayout>

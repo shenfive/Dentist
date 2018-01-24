@@ -63,12 +63,12 @@
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="#77cfd6"
             android:gravity="center_horizontal"
             android:text="@string/title"
             android:textAlignment="center"
-            android:background="#77cfd6"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
+            android:textColor="@color/mainLightText"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -76,8 +76,8 @@
 
         <Button
             android:id="@+id/login"
-            android:layout_width="88dp"
-            android:layout_height="wrap_content"
+            android:layout_width="49sp"
+            android:layout_height="26sp"
             android:layout_marginRight="8dp"
             android:background="@drawable/login"
             android:gravity="center"
@@ -153,11 +153,30 @@
                 android:layout_weight="1"
                 android:background="@drawable/reservation"
                 android:onClick="buttonOnClick"
+                android:paddingTop="88sp"
                 android:text="@string/newReservation"
+                android:textColor="@color/mainLightText"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/textView44"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:textAlignment="center"
+                android:textColor="@color/mainDarkGrayText"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/newReservation"
+                app:layout_constraintStart_toStartOf="@+id/newReservation" />
+
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
@@ -171,12 +190,15 @@
                 android:layout_height="138sp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="16dp"
+                android:paddingTop="88sp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/record"
                 android:onClick="buttonOnClick"
                 android:text="@string/myReservation"
+                android:textColor="@color/mainLightText"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -208,7 +230,7 @@
             android:onClick="buttonOnClick"
             android:text="@string/tab1"
             android:textColor="#ffffff"
-            android:textSize="13sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/tab2b"
@@ -219,7 +241,7 @@
             android:onClick="buttonOnClick"
             android:text="@string/tab2"
             android:textColor="#ffffff"
-            android:textSize="13sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/tab3b"
@@ -230,7 +252,7 @@
             android:onClick="buttonOnClick"
             android:text="@string/tab3"
             android:textColor="#ffffff"
-            android:textSize="13sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/tab4b"
@@ -241,7 +263,7 @@
             android:onClick="buttonOnClick"
             android:text="@string/tab4"
             android:textColor="#ffffff"
-            android:textSize="13sp" />
+            android:textSize="18sp" />
 
 
     </LinearLayout>

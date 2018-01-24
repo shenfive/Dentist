@@ -16,7 +16,7 @@
     <string name="passwordRequest">must 8 to 12 charecters</string>
     <string name="idRequest">Passport or National ID number</string>
     <string name="forgetPW">forget password</string>
-    <string name="newAccount">Sing in new Account</string>
+    <string name="newAccount">Sing In </string>
     <string name="passwordError001Len">must 8 to 12 charecters</string>
     <string name="passwordError002Character">must including 1. capital letters or lowercase (A~Z)(a~z) 2. numbers (0~9)</string>
     <string name="loginSuceesfully">Login Sucees</string>

@@ -34,7 +34,7 @@
             app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
             app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
             app:compactCalendarTextColor="#77cfd6"
-            app:compactCalendarTextSize="12sp"
+            app:compactCalendarTextSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -58,19 +58,19 @@
 
     <Button
         android:id="@+id/preMonth"
-        android:layout_width="72sp"
-        android:layout_height="54sp"
+        android:layout_width="40sp"
+        android:layout_height="30sp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:background="@drawable/button_previous"
         android:onClick="onClickPreviousMonth"
+        app:layout_constraintBottom_toBottomOf="@+id/monthTitle"
         app:layout_constraintStart_toEndOf="@+id/monthTitle"
-        app:layout_constraintTop_toBottomOf="@+id/newReTitle" />
+        app:layout_constraintTop_toTopOf="@+id/monthTitle" />
 
     <Button
         android:id="@+id/nextMonth"
-        android:layout_width="72sp"
-        android:layout_height="54sp"
+        android:layout_width="40sp"
+        android:layout_height="30sp"
         android:layout_marginStart="8dp"
         android:background="@drawable/button_next"
         android:onClick="onClickNextMonth"
