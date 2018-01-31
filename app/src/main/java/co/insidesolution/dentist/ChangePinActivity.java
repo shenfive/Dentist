@@ -1,9 +1,7 @@
-package idv.swj.dentist;
-
+package co.insidesolution.dentist;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -19,110 +18,81 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class Login extends AppCompatActivity {
-    EditText account,password;
-    SharedPreferences loginPre;
-    LoginAsyncTask loginAsyncTask;
+public class ChangePinActivity extends AppCompatActivity {
 
+    TextView account;
+    EditText oldPassword,password1,password2;
+    ChangePasswordAsyncTask changePasswordAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        account = (EditText)findViewById(R.id.nID);
-        password = (EditText)findViewById(R.id.password);
-        loginPre = getSharedPreferences("loginStatus",0);
+        setContentView(R.layout.activity_change_pin);
+        account = (TextView)findViewById(R.id.fpAccount);
+        oldPassword = (EditText)findViewById(R.id.fpOldPassword);
+        password1 = (EditText)findViewById(R.id.fpPassword);
+        password2 = (EditText)findViewById(R.id.fpRePassword);
+        account.setText(getSharedPreferences("loginStatus",0).getString("Account",""));
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        String loginstatus = loginPre.getString("status","logout");
-        if (loginstatus.equals("login")){
-            this.finish();
-        }
-    }
-
-    public void submit(View v) {
+    public void onClickSubmit(View v){
         if(!Tools.checkNetworkConnected(this)){return;};
+        String oldPasswordS,password1S,password2S;
+        oldPasswordS = oldPassword.getText().toString();
+        password1S = password1.getText().toString();
+        password2S = password2.getText().toString();
 
-        String pass = password.getText().toString();
-        String acc = account.getText().toString().toUpperCase();
+        String[] oldStatus = Tools.checkPassword(this,oldPasswordS,oldPasswordS);
+        if (!oldStatus[0].equals("200")){
+            Tools.showMessage(this,oldStatus[1]);
+            return;
+        }
 
-        Log.d("sub",acc);
+        String status[] = Tools.checkPassword(this,password1S,password2S);
+        if(!status[0].equals("200")){
+            Tools.showMessage(this,status[1]);
+            return;
+        }
 
-        checkPasswordInput(acc,pass);
+        //TODO 打API
 
-    }
-
-    public void onClickForgetPassword(View v){
-        Intent intent = new Intent(this,ForgetPassword.class);
-        startActivity(intent);
-    }
-
-
-    private void checkPasswordInput(String account,String password){
-
-        password = Tools.bin2hex(password);
-        Log.d("HEX",password);
-
-        String url = getString(R.string.api)+"/api/PatientData/LoginPatient";
+        String url = getString(R.string.api)+"/api/PatientData/ChangePatientPin";
 
         JSONObject jsonObject = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
         try {
-            header.put("Version", Tools.apiVersion());
-            header.put("CompanyId", Tools.companyId());
-            header.put("ActionMode", "LoginPatient");
-            data.put("Account", account);
-            data.put("PatientPin", password);
-            jsonObject.put("Header", header);
-            jsonObject.put("Data", data);
+            header.put("Version", Tools.apiVersion())
+                    .put("CompanyId", Tools.companyId())
+                    .put("ActionMode", "ChangePatientPin");
+            data.put("Account", account.getText().toString())
+                    .put("OldPatientPin",Tools.bin2hex(oldPasswordS))
+                    .put("NewPatientPin",Tools.bin2hex(password1S));
+            jsonObject.put("Data", data)
+                    .put("Header",header);
             Log.d("Location","Json");
-            loginAsyncTask = new LoginAsyncTask();
-            loginAsyncTask.context = this;
+            changePasswordAsyncTask = new ChangePasswordAsyncTask();
+            changePasswordAsyncTask.context = this;
             ProgressDialog progressDialog=new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.wait));
             progressDialog.show();
-            loginAsyncTask.progressDialog = progressDialog;
-            loginAsyncTask.execute(url,jsonObject.toString());
+            changePasswordAsyncTask.progressDialog = progressDialog;
+            Log.d("push",jsonObject.toString());
+            changePasswordAsyncTask.execute(url,jsonObject.toString());
 
         }catch (Exception e){
             Log.d("json error",e.getLocalizedMessage());
         }
 
 
-    }
-
-
-    public void createAccount(View v){
-        Intent intent = new Intent();
-        intent.setClass(this,CreateAccount.class);
-        startActivity(intent);
-    }
-
-
-
-    public void showMsg(String msg){
-
-
-        Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
-
 
     }
 
 
-    public class LoginAsyncTask extends AsyncTask<String, String, String> {
+    public class ChangePasswordAsyncTask extends AsyncTask<String, String, String> {
 
         Activity context;
         ProgressDialog progressDialog;
@@ -133,7 +103,6 @@ public class Login extends AppCompatActivity {
         }
         @Override
         protected String  doInBackground(String... params) {
-
 
             Log.d("Location","doInBackground");
 
@@ -167,11 +136,10 @@ public class Login extends AppCompatActivity {
                     response.append(line);
                     response.append('\r');
                 }
-                JSONObject jsonObject1 = new JSONObject(response.toString());
-                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
-                publishProgress(jsonObject1.toString()); // 取得回應後的處理
+
+                publishProgress(response.toString()); // 取得回應後的處理
 
 
             }catch (Exception ex){
@@ -184,11 +152,11 @@ public class Login extends AppCompatActivity {
 
 
         protected void onProgressUpdate(String... progress) {
-
             progressDialog.cancel();
+
+
             JSONObject jsonObject;
             JSONObject header;
-            JSONObject data;
             try {
                 //display response data
                 jsonObject = new JSONObject(progress[0]);
@@ -199,22 +167,9 @@ public class Login extends AppCompatActivity {
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
-                    data = jsonObject.getJSONObject("Data");
-                    Log.d("data:",data.toString());
-
-                    SharedPreferences.Editor editor = loginPre.edit();
-
-                    editor.putString("status","login")
-                            .putString("Account", data.getString("Account"))
-                            .putString("PatientSN", data.getString("PatientSN"))
-                            .putString("PatientName", data.getString("PatientName"))
-                            .putString("PatientMobile", data.getString("PatientMobile"))
-                            .putString("PatientEmail", data.getString("PatientEmail"))
-                            .putString("Gender", data.getString("Gender"))
-                            .putString("Birthday", data.getString("Birthday"))
-                            .commit();
-
-                    Toast.makeText(getApplicationContext(),"Wellcome, " +data.getString("PatientName"),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.passwordChanged),Toast.LENGTH_LONG).show();
+                    SharedPreferences loginPre = getSharedPreferences("loginStatus",0);
+                    loginPre.edit().clear().commit();
                     context.finish();
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
@@ -222,7 +177,7 @@ public class Login extends AppCompatActivity {
 
 
             } catch (Exception ex) {
-                    Log.d("error",ex.getLocalizedMessage());
+                Log.d("error",ex.getLocalizedMessage());
             }
 
         }
@@ -233,5 +188,4 @@ public class Login extends AppCompatActivity {
         }
 
     }
-
 }

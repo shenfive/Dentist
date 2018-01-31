@@ -1,7 +1,10 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
+
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,72 +21,103 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class ForgetPassword extends AppCompatActivity {
-
-    EditText account,email;
-    ForgetPasswordAsyncTask forgetPasswordAsyncTask;
+public class Login extends AppCompatActivity {
+    EditText account,password;
+    SharedPreferences loginPre;
+    LoginAsyncTask loginAsyncTask;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forget_password);
-        account = (EditText)findViewById(R.id.fpAccount);
-        email = (EditText)findViewById(R.id.fgEmail);
+        setContentView(R.layout.activity_login);
+
+        account = (EditText)findViewById(R.id.nID);
+        password = (EditText)findViewById(R.id.password);
+        loginPre = getSharedPreferences("loginStatus",0);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        String loginstatus = loginPre.getString("status","logout");
+        if (loginstatus.equals("login")){
+            this.finish();
+        }
+    }
+
+    public void submit(View v) {
+        if(!Tools.checkNetworkConnected(this)){return;};
+
+        String pass = password.getText().toString();
+        String acc = account.getText().toString().toUpperCase();
+
+        Log.d("sub",acc);
+
+        checkPasswordInput(acc,pass);
 
     }
 
-    public void onClickFGPassword(View v){
-        if(!Tools.checkNetworkConnected(this)){return;};
+    public void onClickForgetPassword(View v){
+        Intent intent = new Intent(this,ForgetPassword.class);
+        startActivity(intent);
+    }
 
-        //檢查是否有帳號
-        String inputAccout = account.getText().toString();
-        String inputEmail = email.getText().toString();
 
-        if (inputAccout.length() < 1){
-            Toast.makeText(this,getString(R.string.accountNoEmpty),Toast.LENGTH_LONG).show();
-            return;
-        }
+    private void checkPasswordInput(String account,String password){
 
-        String[] emailStatus = Tools.checkEmailFormat(inputEmail);
-        if(!emailStatus[0].equals("200")){
-            Toast.makeText(this,emailStatus[1],Toast.LENGTH_LONG).show();
-            return;
-        }
+        password = Tools.bin2hex(password);
+        Log.d("HEX",password);
 
-        String url = getString(R.string.api)+"/api/PatientData/ForgetPatientPin";
+        String url = getString(R.string.api)+"/api/PatientData/LoginPatient";
+
         JSONObject jsonObject = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
         try {
             header.put("Version", Tools.apiVersion());
             header.put("CompanyId", Tools.companyId());
-            header.put("ActionMode", "ForgetPatientPin");
-            data.put("Account", inputAccout.toUpperCase());
-            data.put("Email",inputEmail);
+            header.put("ActionMode", "LoginPatient");
+            data.put("Account", account);
+            data.put("PatientPin", password);
             jsonObject.put("Header", header);
             jsonObject.put("Data", data);
-            Log.d("Location",jsonObject.toString());
-            forgetPasswordAsyncTask = new ForgetPasswordAsyncTask();
-            forgetPasswordAsyncTask.context = this;
+            Log.d("Location","Json");
+            loginAsyncTask = new LoginAsyncTask();
+            loginAsyncTask.context = this;
             ProgressDialog progressDialog=new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.wait));
             progressDialog.show();
-            forgetPasswordAsyncTask.progressDialog = progressDialog;
-            Log.d(url,jsonObject.toString());
-            forgetPasswordAsyncTask.execute(url,jsonObject.toString());
+            loginAsyncTask.progressDialog = progressDialog;
+            loginAsyncTask.execute(url,jsonObject.toString());
 
         }catch (Exception e){
             Log.d("json error",e.getLocalizedMessage());
         }
 
+
     }
 
 
-    public class ForgetPasswordAsyncTask extends AsyncTask<String, String, String> {
+    public void createAccount(View v){
+        Intent intent = new Intent();
+        intent.setClass(this,CreateAccount.class);
+        startActivity(intent);
+    }
+
+
+
+    public void showMsg(String msg){
+
+
+        Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
+
+
+    }
+
+
+    public class LoginAsyncTask extends AsyncTask<String, String, String> {
 
         Activity context;
         ProgressDialog progressDialog;
@@ -94,6 +128,7 @@ public class ForgetPassword extends AppCompatActivity {
         }
         @Override
         protected String  doInBackground(String... params) {
+
 
             Log.d("Location","doInBackground");
 
@@ -127,10 +162,11 @@ public class ForgetPassword extends AppCompatActivity {
                     response.append(line);
                     response.append('\r');
                 }
+                JSONObject jsonObject1 = new JSONObject(response.toString());
+                String string = jsonObject1.getJSONObject("Header").getString("StatusCode");
 
                 rd.close();
-
-                publishProgress(response.toString()); // 取得回應後的處理
+                publishProgress(jsonObject1.toString()); // 取得回應後的處理
 
 
             }catch (Exception ex){
@@ -143,11 +179,11 @@ public class ForgetPassword extends AppCompatActivity {
 
 
         protected void onProgressUpdate(String... progress) {
+
             progressDialog.cancel();
-
-
             JSONObject jsonObject;
             JSONObject header;
+            JSONObject data;
             try {
                 //display response data
                 jsonObject = new JSONObject(progress[0]);
@@ -158,7 +194,22 @@ public class ForgetPassword extends AppCompatActivity {
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.forgetPassworCheckEmail),Toast.LENGTH_LONG).show();
+                    data = jsonObject.getJSONObject("Data");
+                    Log.d("data:",data.toString());
+
+                    SharedPreferences.Editor editor = loginPre.edit();
+
+                    editor.putString("status","login")
+                            .putString("Account", data.getString("Account"))
+                            .putString("PatientSN", data.getString("PatientSN"))
+                            .putString("PatientName", data.getString("PatientName"))
+                            .putString("PatientMobile", data.getString("PatientMobile"))
+                            .putString("PatientEmail", data.getString("PatientEmail"))
+                            .putString("Gender", data.getString("Gender"))
+                            .putString("Birthday", data.getString("Birthday"))
+                            .commit();
+
+                    Toast.makeText(getApplicationContext(),"Wellcome, " +data.getString("PatientName"),Toast.LENGTH_LONG).show();
                     context.finish();
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
@@ -166,7 +217,7 @@ public class ForgetPassword extends AppCompatActivity {
 
 
             } catch (Exception ex) {
-                Log.d("error",ex.getLocalizedMessage());
+                    Log.d("error",ex.getLocalizedMessage());
             }
 
         }

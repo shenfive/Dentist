@@ -1,4 +1,4 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

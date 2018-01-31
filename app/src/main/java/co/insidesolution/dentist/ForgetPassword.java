@@ -1,15 +1,13 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -21,78 +19,69 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ChangePinActivity extends AppCompatActivity {
+public class ForgetPassword extends AppCompatActivity {
 
-    TextView account;
-    EditText oldPassword,password1,password2;
-    ChangePasswordAsyncTask changePasswordAsyncTask;
+    EditText account,email;
+    ForgetPasswordAsyncTask forgetPasswordAsyncTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_pin);
-        account = (TextView)findViewById(R.id.fpAccount);
-        oldPassword = (EditText)findViewById(R.id.fpOldPassword);
-        password1 = (EditText)findViewById(R.id.fpPassword);
-        password2 = (EditText)findViewById(R.id.fpRePassword);
-        account.setText(getSharedPreferences("loginStatus",0).getString("Account",""));
+        setContentView(R.layout.activity_forget_password);
+        account = (EditText)findViewById(R.id.fpAccount);
+        email = (EditText)findViewById(R.id.fgEmail);
+
     }
 
-    public void onClickSubmit(View v){
+    public void onClickFGPassword(View v){
         if(!Tools.checkNetworkConnected(this)){return;};
-        String oldPasswordS,password1S,password2S;
-        oldPasswordS = oldPassword.getText().toString();
-        password1S = password1.getText().toString();
-        password2S = password2.getText().toString();
 
-        String[] oldStatus = Tools.checkPassword(this,oldPasswordS,oldPasswordS);
-        if (!oldStatus[0].equals("200")){
-            Tools.showMessage(this,oldStatus[1]);
+        //檢查是否有帳號
+        String inputAccout = account.getText().toString();
+        String inputEmail = email.getText().toString();
+
+        if (inputAccout.length() < 1){
+            Toast.makeText(this,getString(R.string.accountNoEmpty),Toast.LENGTH_LONG).show();
             return;
         }
 
-        String status[] = Tools.checkPassword(this,password1S,password2S);
-        if(!status[0].equals("200")){
-            Tools.showMessage(this,status[1]);
+        String[] emailStatus = Tools.checkEmailFormat(inputEmail);
+        if(!emailStatus[0].equals("200")){
+            Toast.makeText(this,emailStatus[1],Toast.LENGTH_LONG).show();
             return;
         }
 
-        //TODO 打API
-
-        String url = getString(R.string.api)+"/api/PatientData/ChangePatientPin";
-
+        String url = getString(R.string.api)+"/api/PatientData/ForgetPatientPin";
         JSONObject jsonObject = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject data = new JSONObject();
         try {
-            header.put("Version", Tools.apiVersion())
-                    .put("CompanyId", Tools.companyId())
-                    .put("ActionMode", "ChangePatientPin");
-            data.put("Account", account.getText().toString())
-                    .put("OldPatientPin",Tools.bin2hex(oldPasswordS))
-                    .put("NewPatientPin",Tools.bin2hex(password1S));
-            jsonObject.put("Data", data)
-                    .put("Header",header);
-            Log.d("Location","Json");
-            changePasswordAsyncTask = new ChangePasswordAsyncTask();
-            changePasswordAsyncTask.context = this;
+            header.put("Version", Tools.apiVersion());
+            header.put("CompanyId", Tools.companyId());
+            header.put("ActionMode", "ForgetPatientPin");
+            data.put("Account", inputAccout.toUpperCase());
+            data.put("Email",inputEmail);
+            jsonObject.put("Header", header);
+            jsonObject.put("Data", data);
+            Log.d("Location",jsonObject.toString());
+            forgetPasswordAsyncTask = new ForgetPasswordAsyncTask();
+            forgetPasswordAsyncTask.context = this;
             ProgressDialog progressDialog=new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.wait));
             progressDialog.show();
-            changePasswordAsyncTask.progressDialog = progressDialog;
-            Log.d("push",jsonObject.toString());
-            changePasswordAsyncTask.execute(url,jsonObject.toString());
+            forgetPasswordAsyncTask.progressDialog = progressDialog;
+            Log.d(url,jsonObject.toString());
+            forgetPasswordAsyncTask.execute(url,jsonObject.toString());
 
         }catch (Exception e){
             Log.d("json error",e.getLocalizedMessage());
         }
 
-
-
     }
 
 
-    public class ChangePasswordAsyncTask extends AsyncTask<String, String, String> {
+    public class ForgetPasswordAsyncTask extends AsyncTask<String, String, String> {
 
         Activity context;
         ProgressDialog progressDialog;
@@ -167,9 +156,7 @@ public class ChangePinActivity extends AppCompatActivity {
                 Log.d("Fin:",header.getString("StatusCode"));
 
                 if (header.getString("StatusCode").equals("0000")) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.passwordChanged),Toast.LENGTH_LONG).show();
-                    SharedPreferences loginPre = getSharedPreferences("loginStatus",0);
-                    loginPre.edit().clear().commit();
+                    Toast.makeText(getApplicationContext(),getString(R.string.forgetPassworCheckEmail),Toast.LENGTH_LONG).show();
                     context.finish();
                 }else{
                     Toast.makeText(getApplicationContext(),header.getString("StatusDesc"),Toast.LENGTH_LONG).show();
@@ -188,4 +175,5 @@ public class ChangePinActivity extends AppCompatActivity {
         }
 
     }
+
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    tools:context="idv.swj.dentist.MakeResrvationDiloag">
+    tools:context="co.insidesolution.dentist.MakeResrvationDiloag">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="300dp"

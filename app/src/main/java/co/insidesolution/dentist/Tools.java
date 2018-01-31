@@ -1,4 +1,4 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,26 +7,16 @@ import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.content.ContextWrapper.*;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.net.*;
-
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 /**
  * Created by shenf on 2017/5/10.

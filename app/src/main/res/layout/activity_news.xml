@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="idv.swj.dentist.News">
+    tools:context="co.insidesolution.dentist.News">
 
     <TextView
         android:id="@+id/textView5"

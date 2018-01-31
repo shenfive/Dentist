@@ -1,4 +1,4 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;

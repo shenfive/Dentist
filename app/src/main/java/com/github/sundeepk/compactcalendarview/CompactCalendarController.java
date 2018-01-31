@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import idv.swj.dentist.R;
+import co.insidesolution.dentist.R;
 
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;

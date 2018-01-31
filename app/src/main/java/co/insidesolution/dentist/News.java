@@ -1,4 +1,4 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -21,8 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 public class News extends AppCompatActivity {
 

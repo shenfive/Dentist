@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="idv.swj.dentist">
+    package="co.insidesolution.dentist">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="co.insidesolution.dentist.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,34 +22,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Intro"
+            android:name="co.insidesolution.dentist.Intro"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Doctors"
+            android:name="co.insidesolution.dentist.Doctors"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".News"
+            android:name="co.insidesolution.dentist.News"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Therapy"
+            android:name="co.insidesolution.dentist.Therapy"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".NewReservationMaster"
+            android:name="co.insidesolution.dentist.NewReservationMaster"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MyReservation"
+            android:name="co.insidesolution.dentist.MyReservation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login"
+            android:name="co.insidesolution.dentist.Login"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CreateAccount"
+            android:name="co.insidesolution.dentist.CreateAccount"
             android:screenOrientation="portrait" />
-        <activity android:name=".ForgetPassword" />
-        <activity android:name=".ModifyData" />
-        <activity android:name=".ChangePinActivity" />
-        <activity android:name=".NewReservationDetial" />
-        <activity android:name=".MakeResrvationDiloag"
+        <activity android:name="co.insidesolution.dentist.ForgetPassword" />
+        <activity android:name="co.insidesolution.dentist.ModifyData" />
+        <activity android:name="co.insidesolution.dentist.ChangePinActivity" />
+        <activity android:name="co.insidesolution.dentist.NewReservationDetial" />
+        <activity android:name="co.insidesolution.dentist.MakeResrvationDiloag"
             android:theme="@style/Transparent">
 
         </activity>

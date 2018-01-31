@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="idv.swj.dentist.MyReservation">
+    tools:context="co.insidesolution.dentist.MyReservation">
 
     <TextView
         android:id="@+id/myReservationTitle"

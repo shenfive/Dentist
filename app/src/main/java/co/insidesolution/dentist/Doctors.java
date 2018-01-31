@@ -1,8 +1,7 @@
-package idv.swj.dentist;
+package co.insidesolution.dentist;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.webkit.WebView;
 
 public class Doctors extends AppCompatActivity {
