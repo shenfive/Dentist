@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -26,6 +29,7 @@ public class ChangePinActivity extends AppCompatActivity {
     TextView account;
     EditText oldPassword,password1,password2;
     ChangePasswordAsyncTask changePasswordAsyncTask;
+    EditText pushToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class ChangePinActivity extends AppCompatActivity {
         password1 = (EditText)findViewById(R.id.fpPassword);
         password2 = (EditText)findViewById(R.id.fpRePassword);
         account.setText(getSharedPreferences("loginStatus",0).getString("Account",""));
+        pushToken = (EditText)findViewById(R.id.pushToken);
+        pushToken.setText(FirebaseInstanceId.getInstance().getToken());
     }
 
     public void onClickSubmit(View v){

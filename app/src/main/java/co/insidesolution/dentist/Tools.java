@@ -247,6 +247,37 @@ public class Tools {
         return true;
     }
 
+
+    //轉診療項目 id 為顥示名稱
+    static String treatmentIdToDisplayName(String id){
+
+        String displayName = "不明代碼:"+id;
+
+        switch (id){
+            case "TA":
+                displayName = "牙痛";
+                break;
+            case "TC":
+                displayName = "補蛀牙";
+                break;
+            case "CK":
+                displayName = "檢查";
+                break;
+            case "IQ":
+                displayName = "諮詢";
+                break;
+            case "PR":
+                displayName = "延續之前療程";
+                break;
+            case "OT":
+                displayName = "其他";
+                break;
+        }
+
+
+        return displayName;
+    }
+
     static boolean updateRevHistoryStatus(Context context){
 
         //無網路就不更新

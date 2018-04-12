@@ -40,7 +40,7 @@
     <string name="accountCreated">成功建立帐号！</string>
     <string name="logoutSuceesfully">登出成功</string>
     <string name="logout">登出</string>
-    <string name="api">http://220.135.157.238:1113</string>
+    <string name="api">http://220.134.109.243:1113</string>
     <string name="passwordChange">变更密码</string>
     <string name="modifyYouData">修改资料</string>
     <string name="wait">连线中....</string>

@@ -41,7 +41,7 @@ public class NewReservationMaster extends AppCompatActivity {
     Spinner doctorListSpinner;
     String[] doctorList;
     SharedPreferences loginPre;
-    TextView loginName,calenderTitle;
+    TextView calenderTitle;
     DrAppointmentAsyncTask drAppointmentAsyncTask;
     CompactCalendarView compactCalendarView;
     JSONArray data;
@@ -58,7 +58,6 @@ public class NewReservationMaster extends AppCompatActivity {
         loginPre = getSharedPreferences("loginStatus",0);
 
         doctorListSpinner = (Spinner)findViewById(R.id.doctoerList);
-        loginName = (TextView)findViewById(R.id.loginName);
         calenderTitle = (TextView)findViewById(R.id.monthTitle);
         compactCalendarView = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
 
@@ -426,10 +425,7 @@ public class NewReservationMaster extends AppCompatActivity {
             MyAlertDialog.setPositiveButton(getResources().getString(R.string.login),okClick);
             MyAlertDialog.setNegativeButton(getResources().getString(R.string.cancel),cancelClick);
             MyAlertDialog.show();
-        }else {
-            loginName.setText("Welcome:\n"+loginPre.getString("PatientName","User"));
         }
-
     }
     public class DrAppointmentAsyncTask extends AsyncTask<String, String, String> {
 

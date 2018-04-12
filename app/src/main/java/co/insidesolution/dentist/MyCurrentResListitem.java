@@ -79,7 +79,7 @@ public class MyCurrentResListitem extends BaseAdapter {
                     "~"+
                     itemData.getString("AppointmentEndTime").substring(11,16));
             holder.doctorName.setText(itemData.getString("DrName"));
-            holder.treatmentId.setText(itemData.getString("TreatmentId"));
+            holder.treatmentId.setText(Tools.treatmentIdToDisplayName(itemData.getString("TreatmentId")));
         }catch (Exception e)
         {
             Log.d("CurrentList",e.getLocalizedMessage());

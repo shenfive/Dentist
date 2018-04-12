@@ -1,116 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/round_rect_shap"
-    android:paddingTop="10sp"
-    android:paddingBottom="10sp"
-    android:paddingLeft="10sp"
-    android:paddingRight="10sp"
+    android:layout_height="wrap_content"
+
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textView42"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/appointmentTime"
-            android:textColor="@color/mainDarkGrayText" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/round_rect_shap"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <TextView
             android:id="@+id/appomentTime"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="5"
-            android:text="TextView" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/textView42"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView42"
+            app:layout_constraintTop_toTopOf="@+id/textView42" />
 
         <TextView
-            android:id="@+id/textView45"
-            android:layout_width="0sp"
+            android:id="@+id/textView42"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="2"
-            android:text="@string/doctorName"
-            android:textColor="@color/mainDarkGrayText" />
-
-        <TextView
-            android:id="@+id/appointmentDrName"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:text="TextView" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textView46"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/treatment"
-            android:textColor="@color/mainDarkGrayText" />
+            android:text="@string/appointmentTime"
+            android:textColor="@color/mainDarkGrayText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView45" />
 
         <TextView
             android:id="@+id/appointmentTreatmentId"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="5"
-            android:text="TextView" />
-    </LinearLayout>
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/textView46"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView46"
+            app:layout_constraintTop_toTopOf="@+id/textView46" />
 
-    <LinearLayout
-        android:id="@+id/appointChangArea"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/textView46"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="2"
+            android:text="@string/treatment"
+            android:textColor="@color/mainDarkGrayText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView42" />
 
-        <Button
-            android:id="@+id/confAppoint"
-            android:layout_width="52sp"
-            android:layout_height="19sp"
-            android:layout_weight="1"
-            android:background="@drawable/button_3h"
-            android:onClick="testb1"
-            android:text="@string/ReservationConfirmation"
-            android:textColor="@color/mainLightText"
-            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/textView45"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="2"
+            android:text="@string/doctorName"
+            android:textColor="@color/mainDarkGrayText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/changeAppoint"
-            android:layout_width="50sp"
-            android:layout_height="19dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_3h"
-            android:textColor="@color/mainLightText"
-            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/appointmentDrName"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="5"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/textView45"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView45"
+            app:layout_constraintTop_toTopOf="@+id/textView45" />
 
-        <Button
-            android:id="@+id/cancleAppoint"
-            android:layout_width="50sp"
-            android:layout_height="19sp"
-            android:layout_weight="1"
-            android:background="@drawable/button_3h"
-            android:text="@string/cancel"
-            android:textColor="@color/mainLightText"
-            android:textSize="12sp" />
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="395dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView46">
 
-</LinearLayout>
+            <Button
+                android:id="@+id/confAppoint"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_3h"
+                android:onClick="testb1"
+                android:text="@string/ReservationConfirmation"
+                android:textColor="@color/mainLightText"
+                android:textSize="12sp"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="88dp" />
+
+            <Button
+                android:id="@+id/changeAppoint"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_3h"
+                android:textColor="@color/mainLightText"
+                android:textSize="12sp"
+                tools:layout_editor_absoluteX="145dp"
+                tools:layout_editor_absoluteY="88dp" />
+
+            <Button
+                android:id="@+id/cancleAppoint"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_3h"
+                android:text="@string/cancel"
+                android:textColor="@color/mainLightText"
+                android:textSize="12sp"
+                tools:layout_editor_absoluteX="273dp"
+                tools:layout_editor_absoluteY="92dp" />
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

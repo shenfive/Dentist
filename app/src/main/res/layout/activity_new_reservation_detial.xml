@@ -10,25 +10,23 @@
         android:id="@+id/doctorDiListSpinner"
         android:layout_width="272dp"
         android:layout_height="28dp"
-        app:layout_constraintLeft_toRightOf="@+id/textView37"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toRightOf="@+id/textView37"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView38"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        app:layout_constraintTop_toBottomOf="@+id/textView38" />
 
     <TextView
         android:id="@+id/textView37"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:gravity="center"
         android:text="@string/doctorSelectTitle"
         android:textAlignment="center"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/doctorDiListSpinner"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/doctorDiListSpinner" />
 
@@ -59,9 +57,9 @@
         android:id="@+id/textView39"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/treatment"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/treatmentSpinner"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="@+id/textView37"
         app:layout_constraintRight_toRightOf="@+id/textView37"

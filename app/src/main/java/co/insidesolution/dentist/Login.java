@@ -108,13 +108,6 @@ public class Login extends AppCompatActivity {
 
 
 
-    public void showMsg(String msg){
-
-
-        Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
-
-
-    }
 
 
     public class LoginAsyncTask extends AsyncTask<String, String, String> {

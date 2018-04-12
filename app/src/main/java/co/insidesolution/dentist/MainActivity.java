@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -27,17 +30,21 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton;
     Button userNameButton;
     SharedPreferences loginPre;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Firebase Instaance
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-
-
+        // 取得畫面物件
         loginButton = (Button)findViewById(R.id.login);
         userNameButton = (Button) findViewById(R.id.userName);
+
+        //取得登入狀態
         loginPre = getSharedPreferences("loginStatus",0);
 
     }
@@ -47,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //己登入測試
         modifyLoginStatusUI();
-        Tools.updateRevStatus(this);
-        Tools.updateRevHistoryStatus(this);
+        //Tools.updateRevStatus(this);
+        //Tools.updateRevHistoryStatus(this);
     }
 
 
@@ -100,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void modifyLoginStatusUI(){
-        //己登入測試
-
+        //己登入測試, 如果己登入，就變更按
         String loginStatus = loginPre.getString("status","logout");
 
         if(!loginStatus.equals("logout"))
@@ -109,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
             userNameButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.INVISIBLE);
             String username = loginPre.getString("PatientName","unknow");
-            userNameButton.setText("Welcome \n "+username);
-        }else {
+        }else{
             userNameButton.setVisibility(View.INVISIBLE);
             loginButton.setVisibility(View.VISIBLE);
         }

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="co.insidesolution.dentist.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,37 +22,72 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="co.insidesolution.dentist.Intro"
+            android:name=".Intro"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.Doctors"
+            android:name=".Doctors"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.News"
+            android:name=".News"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.Therapy"
+            android:name=".Therapy"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.NewReservationMaster"
+            android:name=".NewReservationMaster"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.MyReservation"
+            android:name=".MyReservation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.Login"
+            android:name=".Login"
             android:screenOrientation="portrait" />
         <activity
-            android:name="co.insidesolution.dentist.CreateAccount"
+            android:name=".CreateAccount"
             android:screenOrientation="portrait" />
-        <activity android:name="co.insidesolution.dentist.ForgetPassword" />
-        <activity android:name="co.insidesolution.dentist.ModifyData" />
-        <activity android:name="co.insidesolution.dentist.ChangePinActivity" />
-        <activity android:name="co.insidesolution.dentist.NewReservationDetial" />
-        <activity android:name="co.insidesolution.dentist.MakeResrvationDiloag"
-            android:theme="@style/Transparent">
+        <activity android:name=".ForgetPassword" />
+        <activity android:name=".ModifyData" />
+        <activity android:name=".ChangePinActivity" />
+        <activity android:name=".NewReservationDetial" />
+        <activity
+            android:name=".MakeResrvationDiloag"
+            android:theme="@style/Transparent" />
 
-        </activity>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".MyFirebaseInstanceIDService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <!--
+     Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/tooth" />
+        <!--
+             Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <service
+            android:name="com.github.sundeepk.compactcalendarview.domain.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
