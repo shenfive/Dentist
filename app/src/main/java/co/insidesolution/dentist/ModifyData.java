@@ -1,7 +1,9 @@
 package co.insidesolution.dentist;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -9,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -26,16 +30,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ModifyData extends AppCompatActivity {
     EditText nameET,phoneET,emailET;
     TextView account;
+    TextView bMonth,bYear,bDay;
     RadioButton male,female;
     SharedPreferences loginPre;
-    DatePicker maBirthdayDatePicker;
     RadioGroup radioGroup;
     EditPatientAsyncTask editPatientAsyncTask;
+    Button datePickerButton;
+    int bYearInt,bMonthInt,bDayInt;
+    private int mYear, mMonth, mDay;
 
     @Override
     protected void onResume(){
@@ -58,10 +66,23 @@ public class ModifyData extends AppCompatActivity {
         emailET = (EditText)findViewById(R.id.maEmail);
         male = (RadioButton)findViewById(R.id.maMale);
         female = (RadioButton)findViewById(R.id.maFemale);
-        maBirthdayDatePicker = (DatePicker)findViewById(R.id.maBirthday);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup2);
+        datePickerButton = (Button)findViewById(R.id.datePickerButton);
+        bYear = (TextView)findViewById(R.id.bYear);
+        bMonth = (TextView)findViewById(R.id.bMonth);
+        bDay = (TextView)findViewById(R.id.bDay);
+
 
         loginPre = getSharedPreferences("loginStatus",0);
+        String birthdatS = loginPre.getString("Birthday","2018-01-01");
+
+        bYear.setText(birthdatS.substring(0,4));
+        bMonth.setText(birthdatS.substring(5,7));
+        bDay.setText(birthdatS.substring(8,10));
+
+        bYearInt = Integer.parseInt(birthdatS.substring(0,4));
+        bMonthInt = Integer.parseInt(birthdatS.substring(5,7));
+        bDayInt = Integer.parseInt(birthdatS.substring(8,10));
 
         account.setText(loginPre.getString("Account",""));
         nameET.setText(loginPre.getString("PatientName",""));
@@ -74,24 +95,48 @@ public class ModifyData extends AppCompatActivity {
             female.setChecked(true);
         }
 
+
+
+
+
+        datePickerButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public  void  onClick(View view){
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                final Calendar c = Calendar.getInstance();
+                String birthdatS = loginPre.getString("Birthday","2015-12-31");
+                mYear = Integer.parseInt(birthdatS.substring(0,4));
+                mMonth = Integer.parseInt(birthdatS.substring(5,7))-1; // 月份計算為 0~11
+                mDay = Integer.parseInt(birthdatS.substring(8,10));
+
+                DatePickerDialog datePicker = new DatePickerDialog(ModifyData.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        Log.d("year:", year + "/"+month+"/"+day);
+                        bYearInt = year;
+                        bYear.setText(bYearInt+"");
+                        bMonthInt = month + 1;
+                        bMonth.setText((bMonthInt)+"");
+                        bDayInt = day;
+                        bDay.setText(bDayInt+"");
+
+                    }
+
+                }, mYear,mMonth, mDay);
+                datePicker.getDatePicker().setMaxDate(new Date().getTime());
+                datePicker.show();
+            }
+        });
+
+
+
         SimpleDateFormat simpleDateFormater = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat yearFormater = new SimpleDateFormat("yyyy");
         String year = (Integer.parseInt(yearFormater.format(new Date())) - 1) +
                 "";
 
-        try {
-            maBirthdayDatePicker.setMaxDate(simpleDateFormater.parse(year+"1231").getTime());
-            maBirthdayDatePicker.setMinDate(simpleDateFormater.parse("19000101").getTime());
-        } catch (ParseException e) {            e.printStackTrace();
-        }
-        maBirthdayDatePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        String birthdatS = loginPre.getString("Birthday","2015-12-31");
 
-        int bYear = Integer.parseInt(birthdatS.substring(0,4));
-        int bMonth = Integer.parseInt(birthdatS.substring(5,7))-1; // 月份計算為 0~11
-        int bDay = Integer.parseInt(birthdatS.substring(8,10));
-//        Log.d("BirthdayS",birthdatS+"/"+bYear+"/"+bMonth+"/"+bDay);
-        maBirthdayDatePicker.updateDate(bYear,bMonth,bDay);
 
 
     }
@@ -131,10 +176,7 @@ public class ModifyData extends AppCompatActivity {
             genderS ="F";
         }
 
-
-        birthdayS = Tools.int2StringDay(maBirthdayDatePicker.getYear()
-                ,maBirthdayDatePicker.getMonth()+1
-                ,maBirthdayDatePicker.getDayOfMonth());
+        birthdayS = Tools.int2StringDay(bYearInt,bMonthInt,bDayInt);
 
         Log.d("bd",birthdayS);
 

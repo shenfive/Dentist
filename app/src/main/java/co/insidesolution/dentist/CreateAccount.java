@@ -84,18 +84,17 @@ public class CreateAccount extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         Log.d("year:", year + "/"+month+"/"+day);
                         bYearInt = year;
-                        bYear.setText(year+"");
-                        bMonthInt = month;
-                        bMonth.setText(month+"");
+                        bYear.setText(bYearInt+"");
+                        bMonthInt = month + 1;
+                        bMonth.setText(bMonthInt+"");
                         bDayInt = day;
-                        bDay.setText(day+"");
+                        bDay.setText(bDayInt+"");
 
                     }
 
                 }, mYear,mMonth, mDay);
                 datePicker.getDatePicker().setMaxDate(new Date().getTime());
                 datePicker.show();
-
             }
         });
 
