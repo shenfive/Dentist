@@ -14,17 +14,19 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/createAccountTitle"
             android:layout_width="match_parent"
             android:layout_height="44sp"
+            android:background="@color/colorPrimaryDark"
             android:gravity="center_horizontal"
             android:text="@string/newAccount"
             android:textAlignment="center"
-            android:background="@color/colorPrimaryDark"
             android:textColor="@color/mainLightText"
             android:textSize="24sp" />
 
@@ -114,7 +116,7 @@
                     android:layout_height="53dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="32dp"
                     android:background="@drawable/button_2h"
                     android:onClick="submitCreatAccount"
                     android:text="@string/singin"
@@ -122,21 +124,7 @@
                     android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/datePicker" />
-
-                <DatePicker
-                    android:id="@+id/datePicker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="130sp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:calendarViewShown="false"
-                    android:datePickerMode="spinner"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
-                    app:layout_constraintStart_toEndOf="@+id/textView21"
-                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
                 <TextView
                     android:id="@+id/textView12"
@@ -323,12 +311,78 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="74dp"
+                    android:layout_marginTop="32dp"
                     android:text="@string/birthday"
                     android:textSize="16sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+                <Button
+                    android:id="@+id/datePickerButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="設定日期"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/theDay"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+                <TextView
+                    android:id="@+id/theYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="2001"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/textView21"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+                <TextView
+                    android:id="@+id/textView51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="/"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/theYear"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+                <TextView
+                    android:id="@+id/theMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/textView51"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+                <TextView
+                    android:id="@+id/textView53"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="/"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/theMonth"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+                <TextView
+                    android:id="@+id/theDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                    app:layout_constraintStart_toEndOf="@+id/textView53"
+                    app:layout_constraintTop_toTopOf="@+id/textView21" />
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>

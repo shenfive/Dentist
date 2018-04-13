@@ -53,10 +53,10 @@ public class MakeResrvationDiloag extends AppCompatActivity {
             Log.d("MakeRevData", e.getLocalizedMessage());
         }
 
-        doctorNameTV.setText(doctorDisplyName);
-        dateTV.setText(selectedDate);
-        timeTV.setText(startDate.substring(11, 16) + " ~ " + endDate.substring(11, 16));
-        treatmentTV.setText(getString(R.string.treatment)+":"+ treatmentName);
+        doctorNameTV.setText("醫生:  " + doctorDisplyName);
+        dateTV.setText("日期:  " + selectedDate);
+        timeTV.setText("時間:  " + startDate.substring(11, 16) + " ~ " + endDate.substring(11, 16));
+        treatmentTV.setText(getString(R.string.treatment)+":  "+ treatmentName);
 
 
     }

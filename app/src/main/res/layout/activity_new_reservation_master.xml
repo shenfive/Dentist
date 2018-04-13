@@ -48,7 +48,7 @@
 
     <TextView
         android:id="@+id/monthTitle"
-        android:layout_width="82dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
@@ -88,7 +88,7 @@
 
     <Spinner
         android:id="@+id/doctoerList"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
@@ -96,6 +96,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/monthTitle" />
 

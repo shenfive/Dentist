@@ -373,8 +373,8 @@ public class NewReservationMaster extends AppCompatActivity {
 
         for(int i=0;i<allDrList.length();i++){
             try {
-                list.add(allDrList.getJSONObject(i).getString("ChineseName")+" "+
-                        allDrList.getJSONObject(i).getString("EnglishName"));
+                list.add(allDrList.getJSONObject(i).getString("ChineseName"));//+" "+
+                      //  allDrList.getJSONObject(i).getString("EnglishName"));
             }catch (JSONException e){
                 Log.d("get Doctor List:",e.getLocalizedMessage());
             }

@@ -29,6 +29,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewReservationDetial extends AppCompatActivity {
 
@@ -185,15 +186,12 @@ public class NewReservationDetial extends AppCompatActivity {
 
         list.add(getString(R.string.plsSelectDoctor));
 
-        for(int i=0;i<allDrList.length();i++){
+        for(int i=0;i<allDrList.length();i++)
             try {
-                list.add(allDrList.getJSONObject(i).getString("ChineseName")+" "+
-                        allDrList.getJSONObject(i).getString("EnglishName"));
-            }catch (JSONException e){
-                Log.d("get Doctor List:",e.getLocalizedMessage());
+                list.add(allDrList.getJSONObject(i).getString("ChineseName"));//+" "+allDrList.getJSONObject(i).getString("EnglishName"));
+            } catch (JSONException e) {
+                Log.d("get Doctor List:", e.getLocalizedMessage());
             }
-
-        }
         String[] theList = list.toArray(new String[list.size()]);
         return theList;
 

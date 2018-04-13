@@ -1,6 +1,7 @@
 package co.insidesolution.dentist;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,10 +12,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -28,16 +31,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CreateAccount extends AppCompatActivity {
 
     EditText account,name,phone,email,password1,password2,nID;
+    Button datePickerButton;
+    TextView bMonth,bYear,bDay;
     RadioButton male,female;
     RadioGroup radioGroup;
-    DatePicker datePicker;
     CreatAccountAsyncTask creatAccountAsyncTask;
+    int bYearInt,bMonthInt,bDayInt;
 
+    private int mYear, mMonth, mDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +59,46 @@ public class CreateAccount extends AppCompatActivity {
         password2 = (EditText)findViewById(R.id.password2);
         male = (RadioButton)findViewById(R.id.male);
         female = (RadioButton)findViewById(R.id.female);
-        datePicker = (DatePicker)findViewById(R.id.datePicker);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
         nID = (EditText)findViewById(R.id.nID);
+        datePickerButton = (Button)findViewById(R.id.datePickerButton);
+        bYear = (TextView)findViewById(R.id.theYear);
+        bMonth = (TextView)findViewById(R.id.theMonth);
+        bDay = (TextView)findViewById(R.id.theDay);
+        bYearInt = 2010;
+        bMonthInt = 1;
+        bDayInt = 1;
+
+
+        datePickerButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public  void  onClick(View view){
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePicker = new DatePickerDialog(CreateAccount.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        Log.d("year:", year + "/"+month+"/"+day);
+                        bYearInt = year;
+                        bYear.setText(year+"");
+                        bMonthInt = month;
+                        bMonth.setText(month+"");
+                        bDayInt = day;
+                        bDay.setText(day+"");
+
+                    }
+
+                }, mYear,mMonth, mDay);
+                datePicker.getDatePicker().setMaxDate(new Date().getTime());
+                datePicker.show();
+
+            }
+        });
+
 
 
         account.requestFocus();
@@ -66,7 +110,6 @@ public class CreateAccount extends AppCompatActivity {
 
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(group.getWindowToken(), 0);
-                datePicker.requestFocus();
             }
         });
 
@@ -76,12 +119,6 @@ public class CreateAccount extends AppCompatActivity {
         String year = (Integer.parseInt(yearFormater.format(new Date())) - 1) +
                  "";
 
-        try {
-            datePicker.setMaxDate(simpleDateFormater.parse(year+"1231").getTime());
-            datePicker.setMinDate(simpleDateFormater.parse("19000101").getTime());
-        } catch (ParseException e) {            e.printStackTrace();
-        }
-        datePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
 
 
@@ -168,7 +205,7 @@ public class CreateAccount extends AppCompatActivity {
         }
 
 
-        birthdayS = Tools.int2StringDay(datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
+        birthdayS = Tools.int2StringDay(bYearInt,bMonthInt,bDayInt);
 
         password1S = Tools.bin2hex(password1S);
 
